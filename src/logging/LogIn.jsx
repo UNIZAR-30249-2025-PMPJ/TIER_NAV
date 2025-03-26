@@ -4,6 +4,11 @@ const LoginPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // add logic
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        console.log('Email:', email);
+        console.log('Password:', password);
+
     };
     
     return (
