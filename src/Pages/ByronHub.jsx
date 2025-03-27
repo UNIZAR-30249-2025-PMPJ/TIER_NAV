@@ -10,7 +10,7 @@ const ByronHub = () => {
       <h1 className="text-5xl font-bold text-primary">ByronHub</h1>
       <button 
         className="bg-primary text-white px-6 py-2 text-lg rounded-md transition duration-300 hover:bg-secondary"
-        onClick={() => navigate(routes.LogIn)}
+        onClick={() => navigate(routes.login)}
       >
         Login
       </button>
@@ -25,12 +25,12 @@ const ByronHub = () => {
         </p>
       </div>
       <div className="grid grid-cols-2 gap-6 w-full max-w-2xl">
-        <div className="bg-third text-secondary text-2xl font-medium text-center p-6 rounded-lg shadow-md">
+        <button className="bg-third text-secondary text-2xl font-medium text-center p-6 rounded-lg shadow-md">
           Smart Search
-        </div>
-        <div className="bg-third text-secondary text-2xl font-medium text-center p-6 rounded-lg shadow-md">
+        </button>
+        <button className="bg-third text-secondary text-2xl font-medium text-center p-6 rounded-lg shadow-md">
           Interactive Map
-        </div>
+        </button>
       </div>
     </div>
   );

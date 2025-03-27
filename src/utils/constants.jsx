@@ -1,8 +1,8 @@
 const routes = {
-    ByronHub: '/',
-    LogIn: '/login',
-}
+    byronhub: '/',
+    login: '/login',
+    searchrooms: '/searchrooms',
+    home : '/home',
+};
 
-
-
-export { routes };
+export {routes};
