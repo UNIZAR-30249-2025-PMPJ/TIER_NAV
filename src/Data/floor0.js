@@ -1,4 +1,4 @@
-export const dataGeoJSON = {
+export const dataGeoJSONFloor0 = {
   "type" : "FeatureCollection", 
   "features" : [
     {

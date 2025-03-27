@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, GeoJSON, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
-import { dataGeoJSON } from '../Data/planta0';
+import { dataGeoJSONFloor0 } from '../Data/floor0';
+import { dataGeoJSONFloor1 } from '../Data/floor1';
+import { dataGeoJSONFloor2 } from '../Data/floor2';
+import { dataGeoJSONFloor3 } from '../Data/floor3';
+import { dataGeoJSONFloor4 } from '../Data/floor4';
+import { dataGeoJSONFloor5 } from '../Data/floor5';
+import { dataGeoJSONFloorS1 } from '../Data/floorS1';
+
+
 import L from 'leaflet';
 
 // Function to define the style of the GeoJSON based on its properties
@@ -127,9 +135,54 @@ const GeoJSONLayer = ({ geoJson }) => {
 // Home page component (Main component)
 export const Home = () => {
   const [bounds, setBounds] = useState(null);
-
+  const [floor, setFloor] = useState(0);
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
+      <div className="flex gap-4 justify-center mt-8">
+        <button
+          onClick={() => setFloor(0)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Planta 0
+        </button>
+        <button
+          onClick={() => setFloor(1)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Planta 1
+        </button>
+        <button
+          onClick={() => setFloor(2)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Planta 2
+        </button>
+        <button
+          onClick={() => setFloor(3)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Planta 3
+        </button>
+        <button
+          onClick={() => setFloor(4)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Planta 4
+        </button>
+        <button
+          onClick={() => setFloor(5)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Planta 5
+        </button>
+        <button
+          onClick={() => setFloor(-1)}
+          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Sótano 1
+        </button>
+      </div>
+
       <MapContainer
         center={[41.683657, -0.888999]}
         zoom={28}
@@ -146,15 +199,18 @@ export const Home = () => {
           maxZoom={22}
         />
 
-        {/* GeoJSON layer */}
-        <GeoJSON data={dataGeoJSON} style={getGeoJsonStyle} />
-
         {/* Fit the map bounds to the GeoJSON */}
-        <FitBounds geoJson={dataGeoJSON} setBounds={setBounds} />
+        <FitBounds geoJson={dataGeoJSONFloor0} setBounds={setBounds} />
         {bounds && <RestrictBounds bounds={bounds} />}
 
         {/* Custom GeoJSON layer */}
-        <GeoJSONLayer geoJson={dataGeoJSON} />
+        {floor === 0 && <GeoJSONLayer geoJson={dataGeoJSONFloor0} />}
+        {floor === 1 && <GeoJSONLayer geoJson={dataGeoJSONFloor1} />}
+        {floor === 2 && <GeoJSONLayer geoJson={dataGeoJSONFloor2} />}
+        {floor === 3 && <GeoJSONLayer geoJson={dataGeoJSONFloor3} />}
+        {floor === 4 && <GeoJSONLayer geoJson={dataGeoJSONFloor4} />}
+        {floor === 5 && <GeoJSONLayer geoJson={dataGeoJSONFloor5} />}
+        {floor === -1 && <GeoJSONLayer geoJson={dataGeoJSONFloorS1} />}
       </MapContainer>
     </div>
   );
