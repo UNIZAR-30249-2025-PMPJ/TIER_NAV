@@ -1,8 +1,13 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import ByronHub from '../Pages/ByronHub';
-import LoginPage from '../Pages/LogIn';
+import { routes } from '../utils/constants';
 import { NotFound } from '../Pages/NotFound';
 import { Home } from '../Pages/Home';
+import ByronHub from '../Pages/ByronHub';
+import LoginPage from '../Pages/LogIn';
+import SearchRooms from '../Pages/SearchRooms';
+import Layout from '../layout/Layout';
+import MySpace from '../Pages/MySpace';
+
 
 const RouterPrincipal = () => {
 
@@ -27,17 +32,20 @@ const RouterPrincipal = () => {
   return (
         <Router>
           <Routes>
-            <Route path="/" element={<ByronHub/>} />
-            <Route path="/login" element={<LoginPage />} />
-
-            {/* Example of private and admin routes */}
-            <Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>} />
-            
+            <Route path={routes.byronhub} element={<ByronHub/>} />
+            <Route path={routes.login} element={<LoginPage />} />
             <Route path="*" element={<NotFound />} />
 
-            {/* Add more routes as needed */}
+            <Route path="/" element={<Layout />} >
+              {/* Example of private and admin routes */}
+              {/*<Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>} />*/}
+              <Route path={routes.home} element={<Home/>} />
+            
+              {/* <Route path={routes.searchrooms} element={<PrivateRoute><SearchRooms/></PrivateRoute>} /> */}
+              <Route path={routes.searchrooms} element={<SearchRooms/>} />
 
-
+              <Route path={routes.myspace} element={<MySpace/>} />
+            </Route>
           </Routes>
         </Router>
   );

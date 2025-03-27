@@ -37,7 +37,9 @@ const LoginPage = () => {
         <div className="h-screen w-screen bg-white flex flex-col items-center justify-center">
             <h1 className="text-5xl font-bold text-primary mb-10">ByronHub</h1>
             <form className="flex flex-col w-96 bg-gray-100 p-8 rounded-lg shadow-md" onSubmit={handleSubmit}>
-                <label htmlFor="email" className="font-bold text-secondary mb-2">Email</label>
+                <label htmlFor="email" className="font-bold text-secondary mb-2">
+                    Email
+                </label>
                 <input 
                     type="email" 
                     id="email" 
