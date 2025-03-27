@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import ByronHub from '../Pages/ByronHub';
 import LoginPage from '../Pages/LogIn';
 import { NotFound } from '../Pages/NotFound';
+import { Home } from '../Pages/Home';
 
 const RouterPrincipal = () => {
 
@@ -30,7 +31,7 @@ const RouterPrincipal = () => {
             <Route path="/login" element={<LoginPage />} />
 
             {/* Example of private and admin routes */}
-            {/* <Route path="/" element={<PrivateRoute><Home/></PrivateRoute>} /> */}
+            <Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>} />
             
             <Route path="*" element={<NotFound />} />
 

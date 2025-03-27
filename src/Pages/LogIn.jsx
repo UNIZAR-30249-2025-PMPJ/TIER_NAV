@@ -1,13 +1,35 @@
 import React from 'react';
+import { Url } from '../utils/url';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-    const handleSubmit = (e) => {
+    //Use the navigate hook to redirect the user to another page
+    const navigate = useNavigate();
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // add logic
+       //Get the email from the form
         const email = e.target.email.value;
-        const password = e.target.password.value;
-        console.log('Email:', email);
-        console.log('Password:', password);
+        //Send a POST request to the server to login
+        const request = await fetch(Url
+            +"/login", {
+            method: "POST",
+            body: JSON.stringify({email}),
+            headers: {
+              "Content-Type":"application/json"
+            }
+        });
+        //Get the response from the server
+        const response = await request.json();
+        //Check the response
+        if (response.token) {
+            //If the response has a token, save it in the local storage
+            localStorage.setItem("token", response.token);
+            //Redirect the user to the Home page
+            navigate("/home");
+        }
+        console.log(response);
 
     };
     
@@ -20,12 +42,6 @@ const LoginPage = () => {
                     type="email" 
                     id="email" 
                     className="bg-third border-1  rounded-md p-3 mb-4 text-lg shadow-md"
-                />
-                <label htmlFor="password" className="font-bold text-secondary mb-2">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    className="bg-third border-1 border-gray-600 rounded-md p-3 mb-6 text-lg"
                 />
                 <button 
                     type="submit" 
