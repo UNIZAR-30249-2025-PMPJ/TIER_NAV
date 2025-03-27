@@ -22,14 +22,14 @@ const Layout = () => {
           <span className="text-blue-400">|</span>
           <button
             onClick={() => navigate(routes.home)}
-            className={`hover:underline ${isActive(routes.byronhub) ? 'font-bold text-primary' : ''}`}
+            className={`hover:underline ${isActive(routes.home) ? 'font-bold text-primary' : ''}`}
           >
             ByronHub
           </button>
           <span className="text-blue-400">|</span>
           <button
             onClick={() => navigate(routes.myspace)}
-            className={`hover:underline ${isActive('/home') ? 'font-bold text-primary' : ''}`}
+            className={`hover:underline ${isActive(routes.myspace) ? 'font-bold text-primary' : ''}`}
           >
             My Space
           </button>
