@@ -6,6 +6,7 @@ import ByronHub from '../Pages/ByronHub';
 import LoginPage from '../Pages/LogIn';
 import SearchRooms from '../Pages/SearchRooms';
 import Layout from '../layout/Layout';
+import MySpace from '../Pages/MySpace';
 
 
 const RouterPrincipal = () => {
@@ -42,6 +43,8 @@ const RouterPrincipal = () => {
             
               {/* <Route path={routes.searchrooms} element={<PrivateRoute><SearchRooms/></PrivateRoute>} /> */}
               <Route path={routes.searchrooms} element={<SearchRooms/>} />
+
+              <Route path={routes.myspace} element={<MySpace/>} />
             </Route>
           </Routes>
         </Router>

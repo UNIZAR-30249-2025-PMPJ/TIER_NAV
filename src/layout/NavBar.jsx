@@ -28,7 +28,7 @@ const Layout = () => {
           </button>
           <span className="text-blue-400">|</span>
           <button
-            onClick={() => navigate(routes.home)}
+            onClick={() => navigate(routes.myspace)}
             className={`hover:underline ${isActive('/home') ? 'font-bold text-primary' : ''}`}
           >
             My Space

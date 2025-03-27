@@ -3,6 +3,7 @@ const routes = {
     login: '/login',
     searchrooms: '/searchrooms',
     home : '/home',
+    myspace : '/myspace',
 };
 
 export {routes};
