@@ -136,6 +136,7 @@ const GeoJSONLayer = ({ geoJson }) => {
 export const Home = () => {
   const [bounds, setBounds] = useState(null);
   const [floor, setFloor] = useState(0);
+
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
        <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
@@ -143,43 +144,71 @@ export const Home = () => {
        
         <button
           onClick={() => setFloor(0)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === 0 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Planta 0
         </button>
         <button
           onClick={() => setFloor(1)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === 1 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Planta 1
         </button>
         <button
           onClick={() => setFloor(2)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === 2 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Planta 2
         </button>
         <button
           onClick={() => setFloor(3)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === 3 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Planta 3
         </button>
         <button
           onClick={() => setFloor(4)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === 4 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Planta 4
         </button>
         <button
           onClick={() => setFloor(5)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === 5 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Planta 5
         </button>
         <button
           onClick={() => setFloor(-1)}
-          className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
+          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+          ${floor === -1 
+            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
+            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+          `}
         >
           Sótano 1
         </button>

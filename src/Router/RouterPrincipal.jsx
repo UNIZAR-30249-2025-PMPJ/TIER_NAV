@@ -31,7 +31,7 @@ const RouterPrincipal = () => {
             <Route path="/login" element={<LoginPage />} />
 
             {/* Example of private and admin routes */}
-            <Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>} />
+            <Route path="/home" element={<Home />} />
             
             <Route path="*" element={<NotFound />} />
 
