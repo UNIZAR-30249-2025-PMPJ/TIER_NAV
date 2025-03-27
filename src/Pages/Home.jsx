@@ -138,7 +138,9 @@ export const Home = () => {
   const [floor, setFloor] = useState(0);
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
-      <div className="flex gap-4 justify-center mt-8">
+       <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
+      <div className="flex gap-4 justify-center ">
+       
         <button
           onClick={() => setFloor(0)}
           className="px-6 py-3 bg-primary text-white rounded-lg shadow-md transform transition-all duration-200 ease-in-out hover:bg-secondary hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
