@@ -52,30 +52,30 @@ const BookRoom = () => {
   }
 
   return (
-    <div className="p-10 flex flex-col items-center gap-10">
+    <div className="p-10 flex flex-col items-center gap-10 text-secondary">
       {/* Room info + image */}
       <div className="flex justify-center items-start gap-20 w-full max-w-5xl">
         <div className="flex flex-col gap-2 text-lg">
           <div>
-            <span className="text-blue-500 font-medium">Identifier</span>{' '}
+            <span className="font-medium">Identifier</span>{' '}
             <span className="text-black font-semibold">{room.identifier}</span>
           </div>
           <div>
-            <span className="text-blue-500 font-medium">Category</span>{' '}
+            <span className="font-medium">Category</span>{' '}
             <span className="text-black font-semibold">{room.category}</span>
           </div>
           <div>
-            <span className="text-blue-500 font-medium">Capacity</span>{' '}
+            <span className="font-medium">Capacity</span>{' '}
             <span className="text-black font-semibold">{room.capacity}</span>
           </div>
           <div>
-            <span className="text-blue-500 font-medium">Floor</span>{' '}
+            <span className="font-medium">Floor</span>{' '}
             <span className="text-black font-semibold">{room.floor}</span>
           </div>
         </div>
 
         <img
-          src={room.imageUrl || 'https://via.placeholder.com/150'}
+          src={room.imageUrl}
           alt="Room layout"
           className="rounded-lg shadow-md w-64 h-48 object-cover"
         />
@@ -87,55 +87,55 @@ const BookRoom = () => {
         className="bg-gray-100 rounded-xl p-8 shadow-md w-full max-w-3xl text-secondary text-lg"
       >
         <div className="grid grid-cols-2 gap-6 items-center mb-6">
-          <label className="text-blue-500 font-medium">Use</label>
+          <label className="font-medium">Use</label>
           <input
             type="text"
             name="use"
             value={form.use}
             onChange={handleChange}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
+            className="border border-gray-300 rounded px-3 py-2 w-full text-black"
           />
 
-          <label className="text-blue-500 font-medium">Number of people</label>
+          <label className="font-medium">Number of people</label>
           <input
             type="number"
             name="people"
             value={form.people}
             onChange={handleChange}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
+            className="border border-gray-300 rounded px-3 py-2 w-full text-black"
           />
 
-          <label className="text-blue-500 font-medium">Start</label>
+          <label className="font-medium">Start</label>
           <div className="flex gap-4 col-span-2">
             <input
               type="text"
               readOnly
               value={day}
-              className="border border-gray-300 rounded px-3 py-2 w-full"
+              className="border border-gray-300 rounded px-3 py-2 w-full text-black"
             />
             <input
               type="text"
               readOnly
               value={time}
-              className="border border-gray-300 rounded px-3 py-2 w-full"
+              className="border border-gray-300 rounded px-3 py-2 w-full text-black"
             />
           </div>
 
-          <label className="text-blue-500 font-medium">Duration</label>
+          <label className="font-medium">Duration</label>
           <input
             type="text"
             name="duration"
             value={form.duration}
             onChange={handleChange}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
+            className="border border-gray-300 rounded px-3 py-2 w-full text-black"
           />
 
-          <label className="text-blue-500 font-medium">Comments</label>
+          <label className="font-medium">Comments</label>
           <textarea
             name="comments"
             value={form.comments}
             onChange={handleChange}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
+            className="border border-gray-300 rounded px-3 py-2 w-full text-black"
             rows={3}
           />
         </div>

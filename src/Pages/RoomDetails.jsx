@@ -56,19 +56,19 @@ const RoomDetails = () => {
             <div className="flex flex-col gap-2 text-lg text-secondary">
             <div>
                 <span className="pb-2 font-semibold">Identifier</span>{' '}
-                <span className="text-primary font-medium">{room.identifier}</span>
+                <span className="text-black font-medium">{room.identifier}</span>
             </div>
             <div>
                 <span className="pb-2 font-semibold">Category</span>{' '}
-                <span className="text-primary font-medium">{room.category}</span>
+                <span className="text-black font-medium">{room.category}</span>
             </div>
             <div>
                 <span className="pb-2 font-semibold">Capacity</span>{' '}
-                <span className="text-primary font-medium">{room.capacity}</span>
+                <span className="text-black font-medium">{room.capacity}</span>
             </div>
             <div>
                 <span className="pb-2 font-semibold">Floor</span>{' '}
-                <span className="text-primary font-medium">{room.floor}</span>
+                <span className="text-black font-medium">{room.floor}</span>
             </div>
             </div>
             <img

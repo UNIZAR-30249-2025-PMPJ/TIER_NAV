@@ -10,6 +10,7 @@ import Layout from '../layout/Layout';
 import MySpace from '../Pages/MySpace';
 import RoomDetails from '../Pages/RoomDetails';
 import BookRoom from '../Pages/BookRoom';
+import BookingSuccess from '../Pages/BookingSuccess';
 
 
 const RouterPrincipal = () => {
@@ -52,6 +53,8 @@ const RouterPrincipal = () => {
               <Route path={routes.roomdetails} element={<RoomDetails/>} />
 
               <Route path={routes.bookroom} element={<BookRoom/>} />
+
+              <Route path={routes.bookingsucces} element={<BookingSuccess/>} />
             </Route>
           </Routes>
         </Router>

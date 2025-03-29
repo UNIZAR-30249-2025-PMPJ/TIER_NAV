@@ -6,6 +6,7 @@ const routes = {
     myspace : '/myspace',
     roomdetails : '/room/:id',
     bookroom : '/bookroom',
+    bookingsucces : '/bookingsuccess',
 };
 
 export {routes};
