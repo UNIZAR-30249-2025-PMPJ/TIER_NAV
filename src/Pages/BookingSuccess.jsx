@@ -6,15 +6,7 @@ const BookingSuccess = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
 
-    const example = {
-        identifier: 'A0.5',
-        category: 'Class',
-        people: 40,
-        date: 'Tuesday 11',
-        start: '10:00',
-        end: '12:00',
-    };
-
+    console.log('Booking success state:', state);
     const {
         identifier,
         category,
@@ -22,15 +14,7 @@ const BookingSuccess = () => {
         date,
         start,
         end,
-    } = state || example;
-
-    //   if (!identifier) {
-    //     return (
-    //     <div className="text-center mt-20 text-red-500">
-    //     Missing booking data.
-    //     </div>
-    //     );
-    //   }
+    } = state?.booking || {};
 
     return (
         <div className="flex flex-col items-center justify-center h-screen px-4 text-secondary">

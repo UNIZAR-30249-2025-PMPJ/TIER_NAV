@@ -1,6 +1,10 @@
 import React from 'react';
+import { routes } from '../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 const RoomDetails = () => {
+    const navigate = useNavigate();
+
     // const { id } = useParams();
     // const [room, setRoom] = useState(null);
     // const [schedule, setSchedule] = useState({});
@@ -40,11 +44,13 @@ const RoomDetails = () => {
     };
 
     const handleSlotClick = (day, time) => {
-        navigate('/confirm-booking', {
+        console.log('Slot clicked:',room, day, time);
+        navigate(routes.bookroom, {
           state: {
             room,
             day,
             time,
+            category: room.category,
           },
         });
       };

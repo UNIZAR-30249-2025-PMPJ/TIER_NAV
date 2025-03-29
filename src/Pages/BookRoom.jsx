@@ -1,24 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { routes } from '../utils/constants';
 
 const BookRoom = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-
-  // exemple
-  const Room = {
-    id: 1,
-    identifier: 'A0.5',
-    category: 'Class',
-    capacity: 65,
-    floor: 0,
-    image: '',
-  };
-
-  const room = state?.room || Room;
-  const day = state?.day || '2025-03-27';
-  const time = state?.time || '10:00';
-
   const [form, setForm] = useState({
     use: '',
     people: '',
@@ -26,21 +12,40 @@ const BookRoom = () => {
     comments: '',
   });
 
+  const room = state?.room;
+  const day = state?.day;
+  const time = state?.time;
+  const category = state?.category;
+
+  const calculateEndTime = (start, duration) => {
+    const [hours, minutes] = start.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes + Number(duration);
+    const endHours = Math.floor(totalMinutes / 60);
+    const endMinutes = totalMinutes % 60;
+    return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const booking = {
-      roomId: room.id,
-      day,
-      time,
-      ...form,
+      identifier: room.identifier,
+      category: category,
+      people: form.people,
+      date: day,
+      start: time,
+      end: calculateEndTime(time, form.duration),
     };
 
     console.log('Booking submitted:', booking);
-    navigate('/my-bookings');
+    navigate(routes.bookingsuccess, { state: { booking } });
   };
 
   if (!room) {

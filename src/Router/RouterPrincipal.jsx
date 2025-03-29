@@ -54,7 +54,7 @@ const RouterPrincipal = () => {
 
               <Route path={routes.bookroom} element={<BookRoom/>} />
 
-              <Route path={routes.bookingsucces} element={<BookingSuccess/>} />
+              <Route path={routes.bookingsuccess} element={<BookingSuccess/>} />
             </Route>
           </Routes>
         </Router>
