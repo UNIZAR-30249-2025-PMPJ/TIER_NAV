@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { routes } from '../utils/constants';
 import { NotFound } from '../Pages/NotFound';
@@ -7,6 +8,8 @@ import LoginPage from '../Pages/LogIn';
 import SearchRooms from '../Pages/SearchRooms';
 import Layout from '../layout/Layout';
 import MySpace from '../Pages/MySpace';
+import RoomDetails from '../Pages/RoomDetails';
+import BookRoom from '../Pages/BookRoom';
 
 
 const RouterPrincipal = () => {
@@ -45,6 +48,10 @@ const RouterPrincipal = () => {
               <Route path={routes.searchrooms} element={<SearchRooms/>} />
 
               <Route path={routes.myspace} element={<MySpace/>} />
+
+              <Route path={routes.roomdetails} element={<RoomDetails/>} />
+
+              <Route path={routes.bookroom} element={<BookRoom/>} />
             </Route>
           </Routes>
         </Router>
