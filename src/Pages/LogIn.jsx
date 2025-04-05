@@ -25,7 +25,7 @@ const LoginPage = () => {
         //Check the response
         if (response.token) {
             //If the response has a token, save it in the local storage
-            localStorage.setItem("token", response.token);
+            localStorage.setItem("token", response.data);
             //Redirect the user to the Home page
             navigate("/home");
         }
