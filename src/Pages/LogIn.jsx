@@ -21,15 +21,17 @@ const LoginPage = () => {
             }
         });
         //Get the response from the server
-        const response = await request.json();
+        const contentType = request.headers.get("Content-Type");
+        const response = contentType && contentType.includes("application/json")
+            ? await request.json()
+            : await request.text();
         //Check the response
-        if (response.token) {
+        if (response) {
             //If the response has a token, save it in the local storage
-            localStorage.setItem("token", response.data);
+            localStorage.setItem("token", response);
             //Redirect the user to the Home page
             navigate("/home");
         }
-        console.log(response);
 
     };
     
