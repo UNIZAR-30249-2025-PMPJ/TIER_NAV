@@ -136,6 +136,27 @@ const GeoJSONLayer = ({ geoJson }) => {
 export const Home = () => {
   const [bounds, setBounds] = useState(null);
   const [floor, setFloor] = useState(0);
+  const [geoJsonData, setGeoJsonData] = useState(null);
+
+useEffect(() => {
+  fetch("http://localhost:5001/collections/ciudades/items/5308")
+    .then((response) => response.json())
+    .then((data) => {
+      // Detecta si es una sola Feature
+      if (data.type === "Feature") {
+        setGeoJsonData({
+          type: "FeatureCollection",
+          features: [data]
+        });
+      } else {
+        setGeoJsonData(data); // Ya es FeatureCollection
+      }
+      })
+    .catch((error) => {
+      console.error("Error fetching GeoJSON:", error);
+    });
+}, []);
+
 
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
@@ -235,7 +256,7 @@ export const Home = () => {
         {bounds && <RestrictBounds bounds={bounds} />}
 
         {/* Custom GeoJSON layer */}
-        {floor === 0 && <GeoJSONLayer geoJson={dataGeoJSONFloor0} />}
+        {floor === 0 && <GeoJSONLayer geoJson={geoJsonData} />}
         {floor === 1 && <GeoJSONLayer geoJson={dataGeoJSONFloor1} />}
         {floor === 2 && <GeoJSONLayer geoJson={dataGeoJSONFloor2} />}
         {floor === 3 && <GeoJSONLayer geoJson={dataGeoJSONFloor3} />}
