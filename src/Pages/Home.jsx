@@ -2,10 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, GeoJSON, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
-
-
-
 import L from 'leaflet';
+
+
+const fetchGeoJsonCollection = async (collectionName, setter) => {
+  try {
+    const response = await fetch(`http://localhost:5001/collections/${collectionName}/items?limit=1000`);
+    const data = await response.json();
+    if (data.type === "FeatureCollection") {
+      setter(data);
+    } else {
+      console.error(`Respuesta no válida para ${collectionName}`);
+    }
+  } catch (error) {
+    console.error(`Error fetching ${collectionName}:`, error);
+  }
+};
+
 
 // Function to define the style of the GeoJSON based on its properties
 const getGeoJsonStyle = (feature) => {
@@ -138,30 +151,16 @@ export const Home = () => {
   const [dataGeoJSONFloor5, setDataGeoJSONFloor5] = useState(null);
   const [dataGeoJSONFloorS1, setDataGeoJSONFloorS1] = useState(null);
 
-useEffect(() => {
-  const fetchData = async () => {
-    const features = [];
-    for (let i = 5308; i <= 5380; i++) {
-      try {
-        const response = await fetch("http://localhost:5001/collections/planta0/items/" + i);
-        const data = await response.json();
-        if (data.type === "Feature") {
-          features.push(data);
-        } else if (data.features) {
-          features.push(...data.features);
-        }
-      } catch (error) {
-        console.error("Error fetching GeoJSON:", error);
-      }
-    }
-    setDataGeoJSONFloor0({
-      type: "FeatureCollection",
-      features,
-    });
-  };
-
-  fetchData();
-}, []);
+  useEffect(() => {
+    fetchGeoJsonCollection("planta0", setDataGeoJSONFloor0);
+    fetchGeoJsonCollection("planta1", setDataGeoJSONFloor1);
+    fetchGeoJsonCollection("planta2", setDataGeoJSONFloor2);
+    fetchGeoJsonCollection("planta3", setDataGeoJSONFloor3);
+    fetchGeoJsonCollection("planta4", setDataGeoJSONFloor4);
+    fetchGeoJsonCollection("planta5", setDataGeoJSONFloor5);
+    fetchGeoJsonCollection("plantaS1", setDataGeoJSONFloorS1);
+  }, []);
+  
       
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
