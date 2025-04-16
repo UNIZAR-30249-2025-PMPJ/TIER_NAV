@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, GeoJSON, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
-import { dataGeoJSONFloor0 } from '../Data/floor0';
-import { dataGeoJSONFloor1 } from '../Data/floor1';
-import { dataGeoJSONFloor2 } from '../Data/floor2';
-import { dataGeoJSONFloor3 } from '../Data/floor3';
-import { dataGeoJSONFloor4 } from '../Data/floor4';
-import { dataGeoJSONFloor5 } from '../Data/floor5';
-import { dataGeoJSONFloorS1 } from '../Data/floorS1';
+
 
 
 import L from 'leaflet';
@@ -136,28 +130,39 @@ const GeoJSONLayer = ({ geoJson }) => {
 export const Home = () => {
   const [bounds, setBounds] = useState(null);
   const [floor, setFloor] = useState(0);
-  const [geoJsonData, setGeoJsonData] = useState(null);
+  const [dataGeoJSONFloor0, setDataGeoJSONFloor0] = useState(null);
+  const [dataGeoJSONFloor1, setDataGeoJSONFloor1] = useState(null);
+  const [dataGeoJSONFloor2, setDataGeoJSONFloor2] = useState(null);
+  const [dataGeoJSONFloor3, setDataGeoJSONFloor3] = useState(null);
+  const [dataGeoJSONFloor4, setDataGeoJSONFloor4] = useState(null);
+  const [dataGeoJSONFloor5, setDataGeoJSONFloor5] = useState(null);
+  const [dataGeoJSONFloorS1, setDataGeoJSONFloorS1] = useState(null);
 
 useEffect(() => {
-  fetch("http://localhost:5001/collections/ciudades/items/5308")
-    .then((response) => response.json())
-    .then((data) => {
-      // Detecta si es una sola Feature
-      if (data.type === "Feature") {
-        setGeoJsonData({
-          type: "FeatureCollection",
-          features: [data]
-        });
-      } else {
-        setGeoJsonData(data); // Ya es FeatureCollection
+  const fetchData = async () => {
+    const features = [];
+    for (let i = 5308; i <= 5380; i++) {
+      try {
+        const response = await fetch("http://localhost:5001/collections/planta0/items/" + i);
+        const data = await response.json();
+        if (data.type === "Feature") {
+          features.push(data);
+        } else if (data.features) {
+          features.push(...data.features);
+        }
+      } catch (error) {
+        console.error("Error fetching GeoJSON:", error);
       }
-      })
-    .catch((error) => {
-      console.error("Error fetching GeoJSON:", error);
+    }
+    setDataGeoJSONFloor0({
+      type: "FeatureCollection",
+      features,
     });
+  };
+
+  fetchData();
 }, []);
-
-
+      
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
        <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
@@ -256,7 +261,7 @@ useEffect(() => {
         {bounds && <RestrictBounds bounds={bounds} />}
 
         {/* Custom GeoJSON layer */}
-        {floor === 0 && <GeoJSONLayer geoJson={geoJsonData} />}
+        {floor === 0 && <GeoJSONLayer geoJson={dataGeoJSONFloor0} />}
         {floor === 1 && <GeoJSONLayer geoJson={dataGeoJSONFloor1} />}
         {floor === 2 && <GeoJSONLayer geoJson={dataGeoJSONFloor2} />}
         {floor === 3 && <GeoJSONLayer geoJson={dataGeoJSONFloor3} />}
