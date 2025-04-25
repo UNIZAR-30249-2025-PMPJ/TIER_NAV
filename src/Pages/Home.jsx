@@ -103,7 +103,7 @@ const GeoJSONLayer = ({ geoJson }) => {
           const { properties } = feature;
           const popupContent = `
             <strong>Nombre:</strong> ${properties.Nombre} <br/>
-            <strong>Uso:</strong> ${properties.USO} <br/>
+            <strong>Uso:</strong> ${properties.reservabilityCategory} <br/>
             <strong><a href="https://${properties.Link}" target="_blank">Más información</a></strong> <br/>
           `;
           layer.bindPopup(popupContent).openPopup();
@@ -152,7 +152,7 @@ export const Home = () => {
   const [dataGeoJSONFloorS1, setDataGeoJSONFloorS1] = useState(null);
 
   useEffect(() => {
-    fetchGeoJsonCollection("planta0", setDataGeoJSONFloor0);
+    fetchGeoJsonCollection("postgres", setDataGeoJSONFloor0);
     fetchGeoJsonCollection("planta1", setDataGeoJSONFloor1);
     fetchGeoJsonCollection("planta2", setDataGeoJSONFloor2);
     fetchGeoJsonCollection("planta3", setDataGeoJSONFloor3);
