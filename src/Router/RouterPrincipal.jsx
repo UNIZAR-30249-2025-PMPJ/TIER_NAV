@@ -13,6 +13,7 @@ import BookingSuccess from '../Pages/BookingSuccess';
 import RoomList from '../Pages/RoomList';
 import { RoomSelectionProvider } from '../contexts/RoomSelectionContext';
 import { AvailableRoomsProvider } from '../contexts/AvailableRoomsContext';
+import { UserProvider } from '../contexts/UserContext';
 
 
 const RouterPrincipal = () => {
@@ -36,26 +37,28 @@ const RouterPrincipal = () => {
   }
 
   return (
-    <RoomSelectionProvider>
-      <AvailableRoomsProvider>
-        <Router>
-          <Routes>
-            <Route path={routes.byronhub} element={<ByronHub />} />
-            <Route path={routes.login} element={<LoginPage />} />
-            <Route path="*" element={<NotFound />} />
-  
-            <Route path="/" element={<Layout />} >
-              <Route path={routes.home} element={<Home />} />
-              <Route path={routes.myspace} element={<MySpace />} />
-              <Route path={routes.searchrooms} element={<SearchRooms />} />
-              <Route path={routes.roomlist} element={<RoomList />} />
-              <Route path={routes.roomdetails} element={<RoomBooking />} />
-              <Route path={routes.bookingsuccess} element={<BookingSuccess />} />
-            </Route>
-          </Routes>
-        </Router>
-      </AvailableRoomsProvider>
-    </RoomSelectionProvider>
+    <UserProvider>
+      <RoomSelectionProvider>
+        <AvailableRoomsProvider>
+          <Router>
+            <Routes>
+              <Route path={routes.byronhub} element={<ByronHub />} />
+              <Route path={routes.login} element={<LoginPage />} />
+              <Route path="*" element={<NotFound />} />
+    
+              <Route path="/" element={<Layout />} >
+                <Route path={routes.home} element={<Home />} />
+                <Route path={routes.myspace} element={<MySpace />} />
+                <Route path={routes.searchrooms} element={<SearchRooms />} />
+                <Route path={routes.roomlist} element={<RoomList />} />
+                <Route path={routes.roomdetails} element={<RoomBooking />} />
+                <Route path={routes.bookingsuccess} element={<BookingSuccess />} />
+              </Route>
+            </Routes>
+          </Router>
+        </AvailableRoomsProvider>
+      </RoomSelectionProvider>
+    </UserProvider>
   );  
 }
 

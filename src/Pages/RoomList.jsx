@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { routes } from '../utils/constants';
 import { useRoomSelection } from '../contexts/RoomSelectionContext';
 import { useAvailableRooms } from '../contexts/AvailableRoomsContext';
+import { useUser } from '../contexts/UserContext';
 import { Url } from '../utils/url';
 
 const RoomList = () => {
     const { selectedRooms } = useRoomSelection();
     const { availableRooms } = useAvailableRooms();
+    const { user } = useUser();
     const navigate = useNavigate();
-    const token = localStorage.getItem('token');
 
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
-    const personId = decodedToken.id;
+    const personId = user.id;
 
     const handleViewDetails = (room) => {
         navigate(routes.roomdetails, {
@@ -29,9 +29,9 @@ const RoomList = () => {
                     const [day, month, year] = room.date.split('/');
                     const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                     const isoTime = room.start.padStart(5, '0');
-                    startTime = new Date(`${isoDate}T${isoTime}:00`).toISOString();
+                    startTime = `${isoDate}T${isoTime}:00`;
                 } else {
-                    startTime = new Date(`${room.date}T${room.start.padStart(5, '0')}:00`).toISOString();
+                    startTime = `${room.date}T${room.start.padStart(5, '0')}:00`;
                 }
 
                 const response = await fetch(`${Url}/reservations`, {
