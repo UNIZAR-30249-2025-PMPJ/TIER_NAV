@@ -11,6 +11,7 @@ const LoginPage = () => {
         e.preventDefault();
        //Get the email from the form
         const email = e.target.email.value;
+        console.log(Url+"/login")
         //Send a POST request to the server to login
         const request = await fetch(Url
             +"/login", {
