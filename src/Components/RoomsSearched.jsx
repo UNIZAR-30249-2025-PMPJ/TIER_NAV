@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '../utils/constants';
+
 import { SearchRoomsContext } from '../contexts/SearchRoomsContext';
 
 
@@ -8,7 +8,6 @@ const ITEMS_PER_PAGE = 5;
 
 const RoomsSearched = () => {
   const  { availableRooms }  = useContext(SearchRoomsContext);
-  console.log(availableRooms);
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,9 +17,7 @@ const RoomsSearched = () => {
   const currentRooms = availableRooms.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handleViewDetails = (room) => {
-    navigate(routes.roomdetails, {
-      state: { room },
-    });
+    navigate(`/roomdetails/${room.id}`);
   };
 
   const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));

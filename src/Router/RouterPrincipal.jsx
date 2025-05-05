@@ -13,6 +13,7 @@ import BookingSuccess from '../Pages/BookingSuccess';
 import RoomList from '../Pages/RoomList';
 import { UserProvider } from '../contexts/UserProvider';
 import { SearchRoomsProvider } from '../contexts/SearchRoomsProvider';
+import { SelectedRoomsProvider } from '../contexts/SelectedRoomsProvider';
 
 
 
@@ -41,6 +42,7 @@ const RouterPrincipal = () => {
   return (
     <UserProvider>
       <SearchRoomsProvider>
+        <SelectedRoomsProvider>
           <Router>
             <Routes>
               <Route path={routes.byronhub} element={<ByronHub />} />
@@ -51,12 +53,13 @@ const RouterPrincipal = () => {
                 <Route path={routes.home} element={<Home />} />
                 <Route path={routes.myspace} element={<MySpace />} />
                 <Route path={routes.searchrooms} element={<Search />} />
-                <Route path={routes.roomlist} element={<RoomList />} />
+                {/* <Route path={routes.roomlist} element={<RoomList />} /> */}
                 <Route path={routes.roomdetails} element={<RoomBooking />} />
                 <Route path={routes.bookingsuccess} element={<BookingSuccess />} />
               </Route>
             </Routes>
           </Router>
+          </SelectedRoomsProvider>
         </SearchRoomsProvider>
     </UserProvider>
   );  

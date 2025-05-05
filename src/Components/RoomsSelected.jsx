@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Url } from '../utils/url';
 import { routes } from '../utils/constants';
 import { UserContext } from '../contexts/UserContext';
+import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
+import ItemSelectedRoom from './ItemSelectedRoom';
 
 const RoomsSelected = () => {
-  const selectedRooms = []
+  const {selectedRooms, removeRoom} = useContext(SelectedRoomsContext);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -62,12 +64,7 @@ const RoomsSelected = () => {
         <>
           <ul className="space-y-2">
             {selectedRooms.map((room, index) => (
-              <li key={index} className="shadow-md p-3 rounded bg-third">
-                <p><strong className="text-secondary">Name:</strong> {room.name}</p>
-                <p><strong className="text-secondary">Start:</strong> {room.start}</p>
-                <p><strong className="text-secondary">Date:</strong> {room.date}</p>
-                <p><strong className="text-secondary">Duration:</strong> {room.duration}</p>
-              </li>
+              <ItemSelectedRoom key={index} room={room} removeRoom={removeRoom} />
             ))}
           </ul>
           <div className="flex justify-center mt-6">

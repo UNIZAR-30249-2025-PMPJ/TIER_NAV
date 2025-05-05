@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { routes } from '../utils/constants';
+import { SearchRoomsContext } from '../contexts/SearchRoomsContext';
 
 const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const {clearAvailableRooms} = useContext(SearchRoomsContext);
+
 
   const isActive = (path) => location.pathname === path;
+
+  const handleNavigationSearch = () => {
+    clearAvailableRooms();
+    navigate(routes.searchrooms);
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -14,7 +22,7 @@ const Layout = () => {
       <header className="bg-gray-200 text-secondary font-medium shadow-sm">
         <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-center gap-8 text-xl">
           <button
-            onClick={() => navigate(routes.searchrooms)}
+            onClick={handleNavigationSearch}
             className={`hover:underline ${isActive(routes.searchrooms) ? 'font-bold text-primary' : ''}`}
           >
             Search

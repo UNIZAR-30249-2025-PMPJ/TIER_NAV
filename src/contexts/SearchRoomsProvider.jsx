@@ -1,19 +1,25 @@
-import { useEffect, useState } from "react"
-import { SearchRoomsContext } from "./SearchRoomsContext"
-
-
+import { useEffect, useState } from "react";
+import { SearchRoomsContext } from "./SearchRoomsContext";
 
 export const SearchRoomsProvider = ({ children }) => {
   const [availableRooms, setAvailableRooms] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false); // Add a flag to track loading
 
-  // Save availableRooms to localStorage whenever it changes
+  // Load availableRooms from localStorage on initial render
   useEffect(() => {
-    localStorage.setItem('availableRooms', JSON.stringify(availableRooms));
-  }, [availableRooms]);
+    const storedRooms = localStorage.getItem("availableRooms");
+    if (storedRooms) {
+      setAvailableRooms(JSON.parse(storedRooms));
+    }
+    setIsLoaded(true); // Mark as loaded
+  }, []);
 
-  
-
-  
+  // Save availableRooms to localStorage whenever it changes, but only after loading
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("availableRooms", JSON.stringify(availableRooms));
+    }
+  }, [availableRooms, isLoaded]);
 
   // Clear available rooms
   const clearAvailableRooms = () => {
@@ -22,7 +28,7 @@ export const SearchRoomsProvider = ({ children }) => {
 
   return (
     <SearchRoomsContext.Provider
-      value={{ availableRooms, setAvailableRooms,  clearAvailableRooms }}
+      value={{ availableRooms, setAvailableRooms, clearAvailableRooms }}
     >
       {children}
     </SearchRoomsContext.Provider>
