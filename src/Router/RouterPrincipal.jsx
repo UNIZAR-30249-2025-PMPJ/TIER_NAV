@@ -5,15 +5,16 @@ import { NotFound } from '../Pages/NotFound';
 import { Home } from '../Pages/Home';
 import ByronHub from '../Pages/ByronHub';
 import LoginPage from '../Pages/LogIn';
-import SearchRooms from '../Pages/SearchRooms';
+import Search from '../Pages/Search';
 import Layout from '../layout/Layout';
 import MySpace from '../Pages/MySpace';
 import RoomBooking from '../Pages/RoomBooking';
 import BookingSuccess from '../Pages/BookingSuccess';
 import RoomList from '../Pages/RoomList';
-import { RoomSelectionProvider } from '../contexts/RoomSelectionContext';
-import { AvailableRoomsProvider } from '../contexts/AvailableRoomsContext';
-import { UserProvider } from '../contexts/UserContext';
+import { UserProvider } from '../contexts/UserProvider';
+
+
+
 
 
 const RouterPrincipal = () => {
@@ -38,8 +39,7 @@ const RouterPrincipal = () => {
 
   return (
     <UserProvider>
-      <RoomSelectionProvider>
-        <AvailableRoomsProvider>
+
           <Router>
             <Routes>
               <Route path={routes.byronhub} element={<ByronHub />} />
@@ -49,15 +49,13 @@ const RouterPrincipal = () => {
               <Route path="/" element={<Layout />} >
                 <Route path={routes.home} element={<Home />} />
                 <Route path={routes.myspace} element={<MySpace />} />
-                <Route path={routes.searchrooms} element={<SearchRooms />} />
+                <Route path={routes.searchrooms} element={<Search />} />
                 <Route path={routes.roomlist} element={<RoomList />} />
                 <Route path={routes.roomdetails} element={<RoomBooking />} />
                 <Route path={routes.bookingsuccess} element={<BookingSuccess />} />
               </Route>
             </Routes>
           </Router>
-        </AvailableRoomsProvider>
-      </RoomSelectionProvider>
     </UserProvider>
   );  
 }

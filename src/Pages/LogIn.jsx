@@ -1,21 +1,18 @@
-import React from 'react';
+
 import { Url } from '../utils/url';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext';
 
 const LoginPage = () => {
     //Use the navigate hook to redirect the user to another page
     const navigate = useNavigate();
-    const { login } = useUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
        //Get the email from the form
         const email = e.target.email.value;
-        console.log(Url+"/login")
         //Send a POST request to the server to login
         const request = await fetch(Url
-            +"/api/login", {
+            +"/login", {
             method: "POST",
             body: JSON.stringify({email}),
             headers: {
@@ -29,7 +26,7 @@ const LoginPage = () => {
             : await request.text();
         //Check the response
         if (response) {
-            login(response);
+            localStorage.setItem("token", response);
             //Redirect the user to the Home page
             navigate("/home");
         }
