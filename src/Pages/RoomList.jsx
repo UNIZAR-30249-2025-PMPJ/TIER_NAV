@@ -84,7 +84,7 @@ const RoomList = () => {
                             >
                                 <td className="py-2">{room.name}</td>
                                 <td className="py-2">{room.category}</td>
-                                <td className="py-2">{room.maxUsage}</td>
+                                <td className="py-2">{room.capacity}</td>
                                 <td className="py-2">{room.floor}</td>
                             </tr>
                         ))}

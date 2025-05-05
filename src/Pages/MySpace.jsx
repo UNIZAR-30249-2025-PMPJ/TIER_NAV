@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useUser } from '../contexts/UserContext';
 
 const MySpace = () => {
-  const [user, setUser] = useState({});
+  const { user } = useUser();
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user')) || {
-      name: 'Test',
-      email: 'test@example.com',
-      role: 'student',
-    };
-
     const userBookings = [
       {
         id: 1,
@@ -32,9 +27,12 @@ const MySpace = () => {
       },
     ];
 
-    setUser(storedUser);
     setBookings(userBookings);
   }, []);
+
+  if (!user) {
+    return <div className="p-10 text-center text-red-500">User not connected.</div>;
+  }
 
   return (
     <div className="p-10">
@@ -54,7 +52,7 @@ const MySpace = () => {
 
       {/* Bookings Table */}
       <div className="bg-gray-100 rounded-xl p-6 shadow-md overflow-x-auto">
-      <h1 className="text-3xl font-bold text-primary mb-2">My Bookings</h1>
+        <h1 className="text-3xl font-bold text-primary mb-2">My Bookings</h1>
         <table className="w-full text-left text-md text-secondary">
           <thead>
             <tr className="border-b border-blue-300">

@@ -1,11 +1,12 @@
 import React from 'react';
 import { Url } from '../utils/url';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 
 const LoginPage = () => {
     //Use the navigate hook to redirect the user to another page
     const navigate = useNavigate();
-
+    const { login } = useUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,7 +14,7 @@ const LoginPage = () => {
         const email = e.target.email.value;
         //Send a POST request to the server to login
         const request = await fetch(Url
-            +"/login", {
+            , {
             method: "POST",
             body: JSON.stringify({email}),
             headers: {
@@ -27,8 +28,7 @@ const LoginPage = () => {
             : await request.text();
         //Check the response
         if (response) {
-            //If the response has a token, save it in the local storage
-            localStorage.setItem("token", response);
+            login(response);
             //Redirect the user to the Home page
             navigate("/home");
         }

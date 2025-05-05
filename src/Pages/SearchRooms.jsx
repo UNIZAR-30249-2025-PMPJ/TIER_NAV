@@ -45,6 +45,7 @@ const SearchRooms = () => {
         maxUsage: item.maxUsage || 'N/A',
         maxOccupants: item.maxOccupants || 'N/A',
         floor: item.floor || 'N/A',
+        capacity: Math.floor((item.maxOccupants || 0) * (item.maxUsage || 0) / 100),
       }));
 
       updateAvailableRooms(formatted);

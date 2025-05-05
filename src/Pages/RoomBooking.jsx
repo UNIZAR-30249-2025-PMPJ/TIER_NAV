@@ -77,8 +77,8 @@ const RoomBooking = () => {
             return;
         }
     
-        if (numberOfPeople > room.maxUsage) {
-            alert(`Number of people cannot exceed room capacity (${room.maxUsage}).`);
+        if (numberOfPeople > room.capacity) {
+            alert(`Number of people cannot exceed room capacity (${room.capacity}).`);
             return;
         }
     
@@ -148,7 +148,7 @@ const RoomBooking = () => {
                     </div>
                     <div>
                         <span className="font-medium text-blue-500">Capacity</span>{' '}
-                        <span className="text-black font-semibold">{room.maxUsage}</span>
+                        <span className="text-black font-semibold">{room.capacity}</span>
                     </div>
                     <div>
                         <span className="font-medium text-blue-500">Floor</span>{' '}
