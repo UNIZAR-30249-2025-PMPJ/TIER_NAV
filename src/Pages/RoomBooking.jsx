@@ -138,41 +138,48 @@ const RoomBooking = () => {
         <div className="p-10 flex flex-col items-center gap-10 text-secondary">
             {/* Hour Grid Calendar */}
             <div className="overflow-x-auto w-full max-w-5xl bg-gray-100 rounded-xl shadow-md">
+            {Object.keys(bookedTimes).length === 0 ? (
+                <div className="text-center py-6 text-gray-500 font-medium">
+                No reservations found for this room.
+                </div>
+            ) : (
                 <div className="grid" style={{ gridTemplateColumns: `80px repeat(${Object.keys(bookedTimes).length}, 1fr)` }}>
-                    {/* Header row */}
-                    <div className="border border-gray-600 bg-white"></div>
+                {/* Header row */}
+                <div className="border border-gray-600 bg-white"></div>
+                {[...Object.keys(bookedTimes)].sort((a, b) => {
+                    const [dayA, monthA, yearA] = a.split('/').map(Number);
+                    const [dayB, monthB, yearB] = b.split('/').map(Number);
+                    return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+                }).map(date => (
+                    <div key={date} className="border border-gray-600 text-center py-2 font-semibold">{date}</div>
+                ))}
+
+                {/* Time rows */}
+                {generateHalfHours().map(time => (
+                    <React.Fragment key={time}>
+                    {/* Left time label */}
+                    <div className="border text-right pr-2 text-sm text-gray-600 h-6 flex items-center justify-end">
+                        {time}
+                    </div>
                     {[...Object.keys(bookedTimes)].sort((a, b) => {
                         const [dayA, monthA, yearA] = a.split('/').map(Number);
                         const [dayB, monthB, yearB] = b.split('/').map(Number);
                         return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
-                        }).map(date => (
-                        <div key={date} className="border border-gray-600 text-center py-2 font-semibold">{date}</div>
-                    ))}
-
-                    {/* Time rows */}
-                    {generateHalfHours().map(time => (
-                        <React.Fragment key={time}>
-                        {/* Left time label */}
-                        <div className="border text-right pr-2 text-sm text-gray-600 h-6 flex items-center justify-end">
-                            {time}
-                        </div>
-                        {[...Object.keys(bookedTimes)].sort((a, b) => {
-                            const [dayA, monthA, yearA] = a.split('/').map(Number);
-                            const [dayB, monthB, yearB] = b.split('/').map(Number);
-                            return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
-                            }).map(date => {
-                            const isBooked = bookedTimes[date]?.includes(time);
-                            return (
-                            <div
-                                key={date + time}
-                                className={`border border-gray-400 h-6 ${isBooked ? 'bg-gray-300' : 'bg-white'}`}
-                            ></div>
-                            );
-                        })}
-                        </React.Fragment>
-                    ))}
+                    }).map(date => {
+                        const isBooked = bookedTimes[date]?.includes(time);
+                        return (
+                        <div
+                            key={date + time}
+                            className={`border border-gray-400 h-6 ${isBooked ? 'bg-gray-300' : 'bg-white'}`}
+                        ></div>
+                        );
+                    })}
+                    </React.Fragment>
+                ))}
                 </div>
+            )}
             </div>
+
 
             {/* Room info + form */}
             <div className="w-full max-w-5xl flex gap-10 justify-between">
