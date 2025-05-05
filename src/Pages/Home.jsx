@@ -149,7 +149,6 @@ export const Home = () => {
   const [dataGeoJSONFloor2, setDataGeoJSONFloor2] = useState(null);
   const [dataGeoJSONFloor3, setDataGeoJSONFloor3] = useState(null);
   const [dataGeoJSONFloor4, setDataGeoJSONFloor4] = useState(null);
-  const [dataGeoJSONFloor5, setDataGeoJSONFloor5] = useState(null);
   const [dataGeoJSONFloorS1, setDataGeoJSONFloorS1] = useState(null);
 
 
@@ -185,7 +184,6 @@ export const Home = () => {
       setDataGeoJSONFloor2(filterGeoJsonByFloor(dataGeoJSON, "2"));
       setDataGeoJSONFloor3(filterGeoJsonByFloor(dataGeoJSON, "3"));
       setDataGeoJSONFloor4(filterGeoJsonByFloor(dataGeoJSON, "4"));
-      setDataGeoJSONFloor5(filterGeoJsonByFloor(dataGeoJSON, "5"));
       setDataGeoJSONFloorS1(filterGeoJsonByFloor(dataGeoJSON, "S1"));
     }
   }, [dataGeoJSON]);
@@ -246,16 +244,7 @@ export const Home = () => {
         >
           Planta 4
         </button>
-        <button
-          onClick={() => setFloor(5)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === 5 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Planta 5
-        </button>
+
         <button
           onClick={() => setFloor(-1)}
           className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
