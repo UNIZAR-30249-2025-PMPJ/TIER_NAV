@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, GeoJSON, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
 import L from 'leaflet';
 import { UrlPyGeoApi } from '../utils/url';
 
+// Fetch GeoJSON data from PyGeoAPI
 const fetchGeoJsonCollection = async (collectionName, setter) => {
   try {
     const response = await fetch(`${UrlPyGeoApi}/collections/${collectionName}/items?limit=1000`);
@@ -12,281 +13,198 @@ const fetchGeoJsonCollection = async (collectionName, setter) => {
     if (data.type === "FeatureCollection") {
       setter(data);
     } else {
-      console.error(`Respuesta no válida para ${collectionName}`);
+      console.error(`Invalid response for ${collectionName}`);
     }
   } catch (error) {
     console.error(`Error fetching ${collectionName}:`, error);
   }
 };
 
-
-// Function to define the style of the GeoJSON based on its properties
+// GeoJSON style based on 'reservabilityCategory'
 const getGeoJsonStyle = (feature) => {
-  // if the 'reservabilityCategory' attribute is 'Office', assign a color
-  if (feature.properties.reservabilityCategory === 'Office') {
-    return {
-      color: "#FFAA00",
-      weight: 2,
-      fillColor: "#FFAA00",
-      fillOpacity: 0.5
-    };
-  }
-  // if the 'reservabilityCategory' attribute is 'Laboratory', assign a color
-  if (feature.properties.reservabilityCategory === 'Laboratory') {
-    return {
-      color: "#5ADA65",
-      weight: 2,
-      fillColor: "#5ADA65",
-      fillOpacity: 0.5
-    };
-  }
-
-  // if the 'reservabilityCategory' attribute is 'Classroom', assign a color
-  if (feature.properties.reservabilityCategory === 'Classroom') {
-    return {
-      color: "#ff00bf",
-      weight: 2,
-      fillColor: "#ff00bf",
-      fillOpacity: 0.5
-    };
-  }
-  // Default style, if the 'USO' attribute is not none of the above
-  return {
-    color: "#44749D",
-    weight: 2,
-    fillColor: "#5A9FDA",
-    fillOpacity: 0.5
+  const category = feature.properties.reservabilityCategory;
+  const styles = {
+    Office: { color: "#FFAA00", fillColor: "#FFAA00" },
+    Laboratory: { color: "#5ADA65", fillColor: "#5ADA65" },
+    Classroom: { color: "#ff00bf", fillColor: "#ff00bf" },
   };
+  const baseStyle = styles[category] || { color: "#44749D", fillColor: "#5A9FDA" };
+  return { ...baseStyle, weight: 2, fillOpacity: 0.5 };
 };
 
-// Component to adjust the zoom of the map based on the GeoJSON bounds
+// Fit map to GeoJSON bounds
 const FitBounds = ({ geoJson, setBounds }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!geoJson || !geoJson.features || geoJson.features.length === 0) return;
-
-    // Get the bounds of the GeoJSON
+    if (!geoJson?.features?.length) return;
     const geoJsonLayer = L.geoJSON(geoJson);
     const bounds = geoJsonLayer.getBounds();
-
-    // Adjust the zoom of the map based on the bounds
     if (bounds.isValid()) {
       map.fitBounds(bounds, { padding: [20, 20], maxZoom: 22 });
-      setBounds(bounds); 
+      setBounds(bounds);
     }
   }, [geoJson, map, setBounds]);
 
   return null;
 };
 
-// Component to restrict the bounds of the map
+// Restrict map bounds
 const RestrictBounds = ({ bounds }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!bounds) return;
-
-    // Expand the bounds by 20%
-    const expandedBounds = bounds.pad(0.2); 
-    map.setMaxBounds(expandedBounds);
+    if (bounds) {
+      map.setMaxBounds(bounds.pad(0.2));
+    }
   }, [bounds, map]);
 
   return null;
 };
 
-// Component to handle the GeoJSON layer events like dbclick or mouseover
+// Render GeoJSON features with interactivity
 const GeoJSONLayer = ({ geoJson }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (!geoJson || !geoJson.features) return;
+    if (!geoJson?.features) return;
 
-    // Create a GeoJSON layer with the data and add it to the map
     const geoJsonLayer = L.geoJSON(geoJson, {
-      style: getGeoJsonStyle,  // Apply the style to each feature
+      style: getGeoJsonStyle,
       onEachFeature: (feature, layer) => {
-        // Show a popup with the feature information when the mouse is over it
         layer.on('mouseover', () => {
-          const { properties } = feature;
+          const { name, reservabilityCategory, assignedTo } = feature.properties;
           const popupContent = `
-            <strong>Name:</strong> ${properties.name} <br/>
-            <strong>Category:</strong> ${properties.reservabilityCategory} <br/>
-            <strong>Assigned:</strong> ${properties.assignedTo}<br/>
+            <strong>Name:</strong> ${name} <br/>
+            <strong>Category:</strong> ${reservabilityCategory} <br/>
+            <strong>Assigned:</strong> ${assignedTo}<br/>
           `;
           layer.bindPopup(popupContent).openPopup();
+          layer.setStyle({ color: "#FF0000", weight: 4, fillColor: "#FF0000", fillOpacity: 0.5 });
 
-          // Change the style of the feature when the mouse is over it
-          layer.setStyle({
-            color: "#FF0000",
-            weight: 4,
-            fillColor: "#FF0000",
-            fillOpacity: 0.5
-          });
-
-          // Restore the original style when the mouse is out
           layer.on('mouseout', () => {
-            layer.setStyle(getGeoJsonStyle(feature));  // Restaurar el estilo original
+            layer.setStyle(getGeoJsonStyle(feature));
             layer.closePopup();
           });
         });
-
-
       }
     }).addTo(map);
 
-    return () => {
-      map.removeLayer(geoJsonLayer);
-    };
+    return () => map.removeLayer(geoJsonLayer);
   }, [geoJson, map]);
 
   return null;
 };
 
-// Home page component (Main component)
+// Floor switch button
+const FloorButton = ({ floor, currentFloor, setFloor }) => {
+  const isActive = floor === currentFloor;
+  const labelMap = {
+    0: "Planta 0",
+    1: "Planta 1",
+    2: "Planta 2",
+    3: "Planta 3",
+    4: "Planta 4",
+    [-1]: "Sótano 1"
+  };
+
+  return (
+    <button
+      onClick={() => setFloor(floor)}
+      className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
+        ${isActive
+          ? 'bg-secondary text-white ring-2 ring-secondary scale-105'
+          : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
+      `}
+    >
+      {labelMap[floor]}
+    </button>
+  );
+};
+
+// Legend box
+const Legend = () => (
+  <div className="bg-white p-4 shadow-lg rounded-lg absolute top-4 right-4 text-sm z-[1000]">
+    <h2 className="font-bold mb-2">Legend</h2>
+    <ul>
+      <li><span className="inline-block w-4 h-4 mr-2 bg-[#FFAA00]"></span> Office</li>
+      <li><span className="inline-block w-4 h-4 mr-2 bg-[#5ADA65]"></span> Laboratory</li>
+      <li><span className="inline-block w-4 h-4 mr-2 bg-[#ff00bf]"></span> Classroom</li>
+      <li><span className="inline-block w-4 h-4 mr-2 bg-[#5A9FDA]"></span> Common Room</li>
+    </ul>
+  </div>
+);
+
+// Main component
 export const Home = () => {
   const [bounds, setBounds] = useState(null);
   const [floor, setFloor] = useState(0);
   const [dataGeoJSON, setDataGeoJSON] = useState(null);
-  const [dataGeoJSONFloor0, setDataGeoJSONFloor0] = useState(null);
-  const [dataGeoJSONFloor1, setDataGeoJSONFloor1] = useState(null);
-  const [dataGeoJSONFloor2, setDataGeoJSONFloor2] = useState(null);
-  const [dataGeoJSONFloor3, setDataGeoJSONFloor3] = useState(null);
-  const [dataGeoJSONFloor4, setDataGeoJSONFloor4] = useState(null);
-  const [dataGeoJSONFloorS1, setDataGeoJSONFloorS1] = useState(null);
 
-
-  //The collection from PyGeoAPI gives all the spaces in the building
-  //Now we are going to filter the spaces by floor
-  const filterGeoJsonByFloor = (geoJson, floor) => {
-  if (!geoJson || !geoJson.features) return null;
-  //The spaces have a property called 'floor' that indicates the floor of the space
-  //We are going to add the space to the useState dataGeoJson if the floor is the same as the selected floor
-  //return the filtered GeoJSON
-  const filteredFeatures = geoJson.features.filter((feature) => {
-    const featureFloor = feature.properties.floor;
-    return featureFloor === floor;
+  const [floorData, setFloorData] = useState({
+    0: null, 1: null, 2: null, 3: null, 4: null, [-1]: null
   });
-  return {
-    type: "FeatureCollection",
-    features: filteredFeatures,
-  };
 
-};
+  // Filter GeoJSON by floor
+  const filterGeoJsonByFloor = (geoJson, floor) => {
+    if (!geoJson?.features) return null;
+    const filtered = geoJson.features.filter(f => f.properties.floor === floor.toString());
+    return { type: "FeatureCollection", features: filtered };
+  };
 
   useEffect(() => {
     fetchGeoJsonCollection("postgres", setDataGeoJSON);
   }, []);
 
-  // When the data is fetched, we filter the data by floor
   useEffect(() => {
-    if (dataGeoJSON) {
-      setDataGeoJSONFloor0(filterGeoJsonByFloor(dataGeoJSON, "0"));
-      setDataGeoJSONFloor1(filterGeoJsonByFloor(dataGeoJSON, "1"));
-      setDataGeoJSONFloor2(filterGeoJsonByFloor(dataGeoJSON, "2"));
-      setDataGeoJSONFloor3(filterGeoJsonByFloor(dataGeoJSON, "3"));
-      setDataGeoJSONFloor4(filterGeoJsonByFloor(dataGeoJSON, "4"));
-      setDataGeoJSONFloorS1(filterGeoJsonByFloor(dataGeoJSON, "S1"));
-    }
-  }, [dataGeoJSON]);
-  
-      
-  return (
-    <div className="h-screen w-screen bg-white flex flex-col items-center gap-8">
-       <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
-      <div className="flex gap-4 justify-center ">
-       
-        <button
-          onClick={() => setFloor(0)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === 0 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Planta 0
-        </button>
-        <button
-          onClick={() => setFloor(1)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === 1 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Planta 1
-        </button>
-        <button
-          onClick={() => setFloor(2)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === 2 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Planta 2
-        </button>
-        <button
-          onClick={() => setFloor(3)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === 3 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Planta 3
-        </button>
-        <button
-          onClick={() => setFloor(4)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === 4 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Planta 4
-        </button>
+    if (!dataGeoJSON) return;
 
-        <button
-          onClick={() => setFloor(-1)}
-          className={`px-6 py-3 rounded-lg shadow-md transform transition-all duration-200 ease-in-out focus:outline-none focus:ring-2
-          ${floor === -1 
-            ? 'bg-secondary text-white ring-2 ring-secondary scale-105' 
-            : 'bg-primary text-white hover:bg-secondary hover:scale-105 focus:ring-primary'}
-          `}
-        >
-          Sótano 1
-        </button>
+    const updatedFloorData = {
+      0: filterGeoJsonByFloor(dataGeoJSON, 0),
+      1: filterGeoJsonByFloor(dataGeoJSON, 1),
+      2: filterGeoJsonByFloor(dataGeoJSON, 2),
+      3: filterGeoJsonByFloor(dataGeoJSON, 3),
+      4: filterGeoJsonByFloor(dataGeoJSON, 4),
+      [-1]: filterGeoJsonByFloor(dataGeoJSON, "S1"),
+    };
+    setFloorData(updatedFloorData);
+  }, [dataGeoJSON]);
+
+  const floors = [0, 1, 2, 3, 4, -1];
+  const currentGeoJson = floorData[floor];
+
+  return (
+    <div className="h-screen w-screen bg-white flex flex-col items-center gap-8 relative">
+      <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
+
+      <div className="flex gap-4 justify-center flex-wrap">
+        {floors.map(f => (
+          <FloorButton key={f} floor={f} currentFloor={floor} setFloor={setFloor} />
+        ))}
       </div>
 
-      <MapContainer
-        center={[41.683657, -0.888999]}
-        zoom={28}
-        maxZoom={30}
-        zoomDelta={0.5}
-        zoomSnap={0.5}
-        style={{ height: "800px", width: "1200px" }}
-        doubleClickZoom={false}
-      >
-        {/* Base layer */}
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution="<a href='https://carto.com/' target='_blank'>CARTO</a>"
-          maxZoom={22}
-        />
+      <div className="relative">
+        <Legend />
+        <MapContainer
+          center={[41.683657, -0.888999]}
+          zoom={28}
+          maxZoom={30}
+          zoomDelta={0.5}
+          zoomSnap={0.5}
+          style={{ height: "800px", width: "1200px" }}
+          doubleClickZoom={false}
+        >
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            attribution="<a href='https://carto.com/' target='_blank'>CARTO</a>"
+            maxZoom={22}
+          />
 
-        {/* Fit the map bounds to the GeoJSON */}
-        <FitBounds geoJson={dataGeoJSONFloor0} setBounds={setBounds} />
-        {bounds && <RestrictBounds bounds={bounds} />}
-
-        {/* Custom GeoJSON layer */}
-        {floor === 0 && <GeoJSONLayer geoJson={dataGeoJSONFloor0} />}
-        {floor === 1 && <GeoJSONLayer geoJson={dataGeoJSONFloor1} />}
-        {floor === 2 && <GeoJSONLayer geoJson={dataGeoJSONFloor2} />}
-        {floor === 3 && <GeoJSONLayer geoJson={dataGeoJSONFloor3} />}
-        {floor === 4 && <GeoJSONLayer geoJson={dataGeoJSONFloor4} />}
-        {floor === -1 && <GeoJSONLayer geoJson={dataGeoJSONFloorS1} />}
-      </MapContainer>
+          <FitBounds geoJson={floorData[0]} setBounds={setBounds} />
+          {bounds && <RestrictBounds bounds={bounds} />}
+          {currentGeoJson && <GeoJSONLayer geoJson={currentGeoJson} />}
+        </MapContainer>
+      </div>
     </div>
   );
 };
