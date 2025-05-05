@@ -3,10 +3,11 @@ import { MapContainer, GeoJSON, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
 import L from 'leaflet';
+import { UrlPyGeoApi } from '../utils/url';
 
 const fetchGeoJsonCollection = async (collectionName, setter) => {
   try {
-    const response = await fetch(`http://localhost:5001/collections/${collectionName}/items?limit=1000`);
+    const response = await fetch(`${UrlPyGeoApi}/collections/${collectionName}/items?limit=1000`);
     const data = await response.json();
     if (data.type === "FeatureCollection") {
       setter(data);
@@ -158,7 +159,6 @@ export const Home = () => {
   if (!geoJson || !geoJson.features) return null;
   //The spaces have a property called 'floor' that indicates the floor of the space
   //We are going to add the space to the useState dataGeoJson if the floor is the same as the selected floor
-  console.log("Filtering GeoJSON by floor:", floor);
   //return the filtered GeoJSON
   const filteredFeatures = geoJson.features.filter((feature) => {
     const featureFloor = feature.properties.floor;
@@ -285,7 +285,7 @@ export const Home = () => {
         />
 
         {/* Fit the map bounds to the GeoJSON */}
-        <FitBounds geoJson={dataGeoJSON} setBounds={setBounds} />
+        <FitBounds geoJson={dataGeoJSONFloor0} setBounds={setBounds} />
         {bounds && <RestrictBounds bounds={bounds} />}
 
         {/* Custom GeoJSON layer */}
