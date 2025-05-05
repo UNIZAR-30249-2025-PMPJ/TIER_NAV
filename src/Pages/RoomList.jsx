@@ -34,7 +34,7 @@ const RoomList = () => {
                     startTime = `${room.date}T${room.start.padStart(5, '0')}:00`;
                 }
 
-                const response = await fetch(`${Url}/reservations`, {
+                const response = await fetch(`${Url}/api/reservations`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const RoomList = () => {
                 <table className="w-full text-left">
                     <thead>
                         <tr className="border-b border-gray-300">
-                            <th className="pb-2">Name</th>
+                            <th className="pb-2">Room</th>
                             <th className="pb-2">Category</th>
                             <th className="pb-2">Capacity</th>
                             <th className="pb-2">Floor</th>
@@ -98,7 +98,7 @@ const RoomList = () => {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="border-b border-gray-300">
-                                <th className="pb-2">Name</th>
+                                <th className="pb-2">Room</th>
                                 <th className="pb-2">Start</th>
                                 <th className="pb-2">Date</th>
                                 <th className="pb-2">Duration</th>

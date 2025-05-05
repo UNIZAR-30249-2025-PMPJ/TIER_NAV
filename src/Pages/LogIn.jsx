@@ -14,7 +14,7 @@ const LoginPage = () => {
         const email = e.target.email.value;
         //Send a POST request to the server to login
         const request = await fetch(Url
-            , {
+            +"/api/login", {
             method: "POST",
             body: JSON.stringify({email}),
             headers: {

@@ -35,7 +35,7 @@ const SearchRooms = () => {
 
       queryParams.append('reservable', true);
 
-      const response = await fetch(Url + `/spaces?${queryParams.toString()}`);
+      const response = await fetch(Url + `/api/spaces?${queryParams.toString()}`);
       const data = await response.json();
 
       const formatted = data.map((item) => ({

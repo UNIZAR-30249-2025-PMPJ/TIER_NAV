@@ -1,34 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '../contexts/UserContext';
+import { Url } from '../utils/url';
 
 const MySpace = () => {
   const { user } = useUser();
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    const userBookings = [
-      {
-        id: 1,
-        identifier: 'A0.5',
-        category: 'Class',
-        people: 40,
-        date: 'Tuesday 11',
-        start: '10:00',
-        end: '12:00',
-      },
-      {
-        id: 2,
-        identifier: 'B1.2',
-        category: 'Meeting',
-        people: 10,
-        date: 'Friday 15',
-        start: '14:00',
-        end: '15:30',
-      },
-    ];
+    const fetchUserBookings = async () => {
+      if (!user || !user.id) return;
 
-    setBookings(userBookings);
-  }, []);
+      try {
+        const response = await fetch(`${Url}/api/reservations?personId=${user.id}`);
+        const json = await response.json();
+
+        const formatted = json.map(res => {
+          const start = new Date(res.startTime);
+          const end = new Date(start.getTime() + res.duration * 60000);
+
+          return {
+            id: res.id,
+            identifier: res.spaceId,
+            people: res.maxAttendees,
+            date: start.toLocaleDateString('es-ES'),
+            start: start.toTimeString().slice(0, 5),
+            end: end.toTimeString().slice(0, 5),
+          };
+        });
+
+        setBookings(formatted);
+      } catch (err) {
+        console.error('Error fetching reservations:', err);
+      }
+    };
+
+    fetchUserBookings();
+  }, [user]);
 
   if (!user) {
     return <div className="p-10 text-center text-red-500">User not connected.</div>;
@@ -57,7 +64,6 @@ const MySpace = () => {
           <thead>
             <tr className="border-b border-blue-300">
               <th className="pb-2">Identifier</th>
-              <th className="pb-2">Category</th>
               <th className="pb-2">Peoples</th>
               <th className="pb-2">Date</th>
               <th className="pb-2">Start</th>
@@ -68,7 +74,6 @@ const MySpace = () => {
             {bookings.map((booking) => (
               <tr key={booking.id} className="border-b border-blue-200 text-black">
                 <td className="py-2">{booking.identifier}</td>
-                <td className="py-2">{booking.category}</td>
                 <td className="py-2">{booking.people}</td>
                 <td className="py-2">{booking.date}</td>
                 <td className="py-2">{booking.start}</td>

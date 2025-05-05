@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRoomSelection } from '../contexts/RoomSelectionContext';
 import { useAvailableRooms } from '../contexts/AvailableRoomsContext';
 import { routes } from '../utils/constants';
+import { Url } from '../utils/url';
 
 const RoomBooking = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { addRoom } = useRoomSelection();
     const { availableRooms } = useAvailableRooms();
+    const [bookedTimes, setBookedTimes] = useState({});
 
     const roomId = location.state?.room?.id;
     const room = availableRooms.find((r) => r.id === roomId);
@@ -26,22 +28,53 @@ const RoomBooking = () => {
         return <div className="text-center mt-20 text-red-500">Room not found.</div>;
     }
 
-    const schedule = {
-        'Monday 10': ['9:00', '10:30', '11:00'],
-        'Tuesday 11': ['14:00'],
-        'Wednesday 12': ['10:00', '11:30'],
-        'Thursday 13': ['11:00', '12:30'],
-        'Friday 14': ['13:00'],
-    };
+    useEffect(() => {
+        const fetchReservations = async () => {
+          if (!roomId) return;
+          try {
+            const response = await fetch(`${Url}/api/reservations?spaceId=${roomId}`);
+            const json = await response.json();
+            const result = {};
+            json.forEach(res => {
+                const start = new Date(res.startTime);
+                const end = new Date(start.getTime() + res.duration * 60000);
+                const dateKey = start.toLocaleDateString('es-ES');
+              
+                if (!result[dateKey]) result[dateKey] = [];
+              
+                const slots = [];
+                const current = new Date(start);
+              
+                while (current < end) {
+                  const hour = current.getHours().toString().padStart(2, '0');
+                  const minutes = current.getMinutes().toString().padStart(2, '0');
+                  slots.push(`${hour}:${minutes}`);
+                  current.setMinutes(current.getMinutes() + 30);
+                }
+              
+                result[dateKey].push(...slots);
+              });
+              
+      
+            setBookedTimes(result);
+          } catch (err) {
+            console.error("Failed to fetch reservations:", err);
+          }
+        };
+      
+        fetchReservations();
+      }, [roomId]);
 
     const generateHalfHours = () => {
         const times = [];
         for (let i = 8; i < 20; i++) {
-            times.push(`${i}:00`, `${i}:30`);
+            times.push(`${i.toString().padStart(2, '0')}:00`);
+            times.push(`${i.toString().padStart(2, '0')}:30`);
         }
         times.push("20:00");
         return times;
     };
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -105,31 +138,37 @@ const RoomBooking = () => {
         <div className="p-10 flex flex-col items-center gap-10 text-secondary">
             {/* Hour Grid Calendar */}
             <div className="overflow-x-auto w-full max-w-5xl bg-gray-100 rounded-xl shadow-md">
-                <div className="grid grid-cols-[80px_repeat(5,1fr)]">
-                    {/* Header */}
-                    <div className="border border-gray-200 bg-white"></div>
-                    {Object.keys(schedule).map((day) => (
-                        <div key={day} className="border border-gray-200 text-center py-2 font-semibold">
-                            {day}
-                        </div>
+                <div className="grid" style={{ gridTemplateColumns: `80px repeat(${Object.keys(bookedTimes).length}, 1fr)` }}>
+                    {/* Header row */}
+                    <div className="border border-gray-600 bg-white"></div>
+                    {[...Object.keys(bookedTimes)].sort((a, b) => {
+                        const [dayA, monthA, yearA] = a.split('/').map(Number);
+                        const [dayB, monthB, yearB] = b.split('/').map(Number);
+                        return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+                        }).map(date => (
+                        <div key={date} className="border border-gray-600 text-center py-2 font-semibold">{date}</div>
                     ))}
 
-                    {/* Time Rows */}
-                    {generateHalfHours().map((time, idx) => (
+                    {/* Time rows */}
+                    {generateHalfHours().map(time => (
                         <React.Fragment key={time}>
-                            {/* Label only for full hours */}
-                            <div className="border-[1px] border-gray-300 text-right pr-2 text-sm text-gray-600 h-6 flex items-center justify-end">
-                                {time.endsWith(":00") ? time : ''}
-                            </div>
-                            {Object.entries(schedule).map(([day, times]) => {
-                                const isBusy = times.includes(time);
-                                return (
-                                    <div
-                                        key={day + time}
-                                        className={`border-[1px] border-gray-300 h-6 ${isBusy ? 'bg-blue-400' : 'bg-white'}`}
-                                    ></div>
-                                );
-                            })}
+                        {/* Left time label */}
+                        <div className="border text-right pr-2 text-sm text-gray-600 h-6 flex items-center justify-end">
+                            {time}
+                        </div>
+                        {[...Object.keys(bookedTimes)].sort((a, b) => {
+                            const [dayA, monthA, yearA] = a.split('/').map(Number);
+                            const [dayB, monthB, yearB] = b.split('/').map(Number);
+                            return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+                            }).map(date => {
+                            const isBooked = bookedTimes[date]?.includes(time);
+                            return (
+                            <div
+                                key={date + time}
+                                className={`border border-gray-400 h-6 ${isBooked ? 'bg-gray-300' : 'bg-white'}`}
+                            ></div>
+                            );
+                        })}
                         </React.Fragment>
                     ))}
                 </div>
@@ -139,7 +178,7 @@ const RoomBooking = () => {
             <div className="w-full max-w-5xl flex gap-10 justify-between">
                 <div className="flex flex-col gap-2 text-lg w-1/2">
                     <div>
-                        <span className="font-medium text-blue-500">Name</span>{' '}
+                        <span className="font-medium text-blue-500">Room</span>{' '}
                         <span className="text-black font-semibold">{room.name}</span>
                     </div>
                     <div>
