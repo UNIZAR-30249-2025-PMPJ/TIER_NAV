@@ -1,0 +1,86 @@
+import React, { useContext } from 'react';
+
+
+import { useNavigate } from 'react-router-dom';
+import { Url } from '../utils/url';
+import { routes } from '../utils/constants';
+import { UserContext } from '../contexts/UserContext';
+
+const RoomsSelected = () => {
+  const selectedRooms = []
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const personId = user.id;
+
+  const handleBook = async () => {
+    try {
+      for (const room of selectedRooms) {
+        let startTime;
+        if (room.date.includes('/')) {
+          const [day, month, year] = room.date.split('/');
+          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          const isoTime = room.start.padStart(5, '0');
+          startTime = `${isoDate}T${isoTime}:00`;
+        } else {
+          startTime = `${room.date}T${room.start.padStart(5, '0')}:00`;
+        }
+
+        const response = await fetch(`${Url}/reservations`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            usage: room.use,
+            startTime,
+            duration: parseInt(room.duration),
+            maxAttendees: parseInt(room.people),
+            personId,
+            spaceId: room.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Reservation failed for ${room.name}`);
+        }
+      }
+
+      navigate(routes.bookingsuccess);
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert('One or more bookings failed.');
+    }
+  };
+
+  return (
+    <div className="bg-white p-4 rounded shadow w-full mt-6">
+      <h3 className="text-2xl text-secondary font-semibold mb-4">Selected Rooms</h3>
+      {selectedRooms.length === 0 ? (
+        <p className="text-secondary text-center">No rooms selected.</p>
+      ) : (
+        <>
+          <ul className="space-y-2">
+            {selectedRooms.map((room, index) => (
+              <li key={index} className="shadow-md p-3 rounded bg-third">
+                <p><strong className="text-secondary">Name:</strong> {room.name}</p>
+                <p><strong className="text-secondary">Start:</strong> {room.start}</p>
+                <p><strong className="text-secondary">Date:</strong> {room.date}</p>
+                <p><strong className="text-secondary">Duration:</strong> {room.duration}</p>
+              </li>
+            ))}
+          </ul>
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={handleBook}
+              className="bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary transition duration-300"
+            >
+              Book
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+export default RoomsSelected;

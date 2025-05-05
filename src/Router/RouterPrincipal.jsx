@@ -12,6 +12,7 @@ import RoomBooking from '../Pages/RoomBooking';
 import BookingSuccess from '../Pages/BookingSuccess';
 import RoomList from '../Pages/RoomList';
 import { UserProvider } from '../contexts/UserProvider';
+import { SearchRoomsProvider } from '../contexts/SearchRoomsProvider';
 
 
 
@@ -39,7 +40,7 @@ const RouterPrincipal = () => {
 
   return (
     <UserProvider>
-
+      <SearchRoomsProvider>
           <Router>
             <Routes>
               <Route path={routes.byronhub} element={<ByronHub />} />
@@ -56,6 +57,7 @@ const RouterPrincipal = () => {
               </Route>
             </Routes>
           </Router>
+        </SearchRoomsProvider>
     </UserProvider>
   );  
 }
