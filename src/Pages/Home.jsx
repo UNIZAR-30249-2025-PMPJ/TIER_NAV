@@ -22,26 +22,34 @@ const fetchGeoJsonCollection = async (collectionName, setter) => {
 
 // Function to define the style of the GeoJSON based on its properties
 const getGeoJsonStyle = (feature) => {
+  // if the 'reservabilityCategory' attribute is 'Office', assign a color
+  if (feature.properties.reservabilityCategory === 'Office') {
+    return {
+      color: "#FFAA00",
+      weight: 2,
+      fillColor: "#FFAA00",
+      fillOpacity: 0.5
+    };
+  }
+  // if the 'reservabilityCategory' attribute is 'Laboratory', assign a color
+  if (feature.properties.reservabilityCategory === 'Laboratory') {
+    return {
+      color: "#5ADA65",
+      weight: 2,
+      fillColor: "#5ADA65",
+      fillOpacity: 0.5
+    };
+  }
 
-  // // if the 'USO' attribute is 'DESPACHO', assign a color
-  // if (feature.properties.USO === 'DESPACHO') {
-  //   return {
-  //     color: "#FF5733",
-  //     weight: 2,
-  //     fillColor: "#FF5733",
-  //     fillOpacity: 0.5
-  //   };
-  // }
-  // // if the 'USO' attribute is 'LABORATORIO', assign a color
-  // if (feature.properties.USO === 'LABORATORIO') {
-  //   return {
-  //     color: "#5A9FDA",
-  //     weight: 2,
-  //     fillColor: "#5A9FDA",
-  //     fillOpacity: 0.5
-  //   };
-  // }
-
+  // if the 'reservabilityCategory' attribute is 'Classroom', assign a color
+  if (feature.properties.reservabilityCategory === 'Classroom') {
+    return {
+      color: "#ff00bf",
+      weight: 2,
+      fillColor: "#ff00bf",
+      fillOpacity: 0.5
+    };
+  }
   // Default style, if the 'USO' attribute is not none of the above
   return {
     color: "#44749D",
@@ -123,11 +131,7 @@ const GeoJSONLayer = ({ geoJson }) => {
           });
         });
 
-        // Log the name of the feature when double-clicked
-        //TODO: Navigate to a space page when double-clicked 
-        layer.on('dblclick', () => {
-          console.log("Double click on:", feature.properties.Nombre);
-        });
+
       }
     }).addTo(map);
 
@@ -168,8 +172,6 @@ export const Home = () => {
     features: filteredFeatures,
   };
 
-
-
 };
 
   useEffect(() => {
@@ -190,7 +192,7 @@ export const Home = () => {
   
       
   return (
-    <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
+    <div className="h-screen w-screen bg-white flex flex-col items-center gap-8">
        <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
       <div className="flex gap-4 justify-center ">
        
@@ -283,7 +285,6 @@ export const Home = () => {
         {floor === 2 && <GeoJSONLayer geoJson={dataGeoJSONFloor2} />}
         {floor === 3 && <GeoJSONLayer geoJson={dataGeoJSONFloor3} />}
         {floor === 4 && <GeoJSONLayer geoJson={dataGeoJSONFloor4} />}
-        {floor === 5 && <GeoJSONLayer geoJson={dataGeoJSONFloor5} />}
         {floor === -1 && <GeoJSONLayer geoJson={dataGeoJSONFloorS1} />}
       </MapContainer>
     </div>
