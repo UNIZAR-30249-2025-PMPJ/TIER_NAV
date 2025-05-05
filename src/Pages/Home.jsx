@@ -2,16 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, GeoJSON, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
-import { dataGeoJSONFloor0 } from '../Data/floor0';
-import { dataGeoJSONFloor1 } from '../Data/floor1';
-import { dataGeoJSONFloor2 } from '../Data/floor2';
-import { dataGeoJSONFloor3 } from '../Data/floor3';
-import { dataGeoJSONFloor4 } from '../Data/floor4';
-import { dataGeoJSONFloor5 } from '../Data/floor5';
-import { dataGeoJSONFloorS1 } from '../Data/floorS1';
-
-
 import L from 'leaflet';
+
+const fetchGeoJsonCollection = async (collectionName, setter) => {
+  try {
+    const response = await fetch(`http://localhost:5001/collections/${collectionName}/items?limit=1000`);
+    const data = await response.json();
+    if (data.type === "FeatureCollection") {
+      setter(data);
+    } else {
+      console.error(`Respuesta no válida para ${collectionName}`);
+    }
+  } catch (error) {
+    console.error(`Error fetching ${collectionName}:`, error);
+  }
+};
+
 
 // Function to define the style of the GeoJSON based on its properties
 const getGeoJsonStyle = (feature) => {
@@ -95,9 +101,9 @@ const GeoJSONLayer = ({ geoJson }) => {
         layer.on('mouseover', () => {
           const { properties } = feature;
           const popupContent = `
-            <strong>Nombre:</strong> ${properties.Nombre} <br/>
-            <strong>Uso:</strong> ${properties.USO} <br/>
-            <strong><a href="https://${properties.Link}" target="_blank">Más información</a></strong> <br/>
+            <strong>Name:</strong> ${properties.name} <br/>
+            <strong>Category:</strong> ${properties.reservabilityCategory} <br/>
+            <strong>Assigned:</strong> ${properties.assignedTo}<br/>
           `;
           layer.bindPopup(popupContent).openPopup();
 
@@ -136,7 +142,55 @@ const GeoJSONLayer = ({ geoJson }) => {
 export const Home = () => {
   const [bounds, setBounds] = useState(null);
   const [floor, setFloor] = useState(0);
+  const [dataGeoJSON, setDataGeoJSON] = useState(null);
+  const [dataGeoJSONFloor0, setDataGeoJSONFloor0] = useState(null);
+  const [dataGeoJSONFloor1, setDataGeoJSONFloor1] = useState(null);
+  const [dataGeoJSONFloor2, setDataGeoJSONFloor2] = useState(null);
+  const [dataGeoJSONFloor3, setDataGeoJSONFloor3] = useState(null);
+  const [dataGeoJSONFloor4, setDataGeoJSONFloor4] = useState(null);
+  const [dataGeoJSONFloor5, setDataGeoJSONFloor5] = useState(null);
+  const [dataGeoJSONFloorS1, setDataGeoJSONFloorS1] = useState(null);
 
+
+  //The collection from PyGeoAPI gives all the spaces in the building
+  //Now we are going to filter the spaces by floor
+  const filterGeoJsonByFloor = (geoJson, floor) => {
+  if (!geoJson || !geoJson.features) return null;
+  //The spaces have a property called 'floor' that indicates the floor of the space
+  //We are going to add the space to the useState dataGeoJson if the floor is the same as the selected floor
+  console.log("Filtering GeoJSON by floor:", floor);
+  //return the filtered GeoJSON
+  const filteredFeatures = geoJson.features.filter((feature) => {
+    const featureFloor = feature.properties.floor;
+    return featureFloor === floor;
+  });
+  return {
+    type: "FeatureCollection",
+    features: filteredFeatures,
+  };
+
+
+
+};
+
+  useEffect(() => {
+    fetchGeoJsonCollection("postgres", setDataGeoJSON);
+  }, []);
+
+  // When the data is fetched, we filter the data by floor
+  useEffect(() => {
+    if (dataGeoJSON) {
+      setDataGeoJSONFloor0(filterGeoJsonByFloor(dataGeoJSON, "0"));
+      setDataGeoJSONFloor1(filterGeoJsonByFloor(dataGeoJSON, "1"));
+      setDataGeoJSONFloor2(filterGeoJsonByFloor(dataGeoJSON, "2"));
+      setDataGeoJSONFloor3(filterGeoJsonByFloor(dataGeoJSON, "3"));
+      setDataGeoJSONFloor4(filterGeoJsonByFloor(dataGeoJSON, "4"));
+      setDataGeoJSONFloor5(filterGeoJsonByFloor(dataGeoJSON, "5"));
+      setDataGeoJSONFloorS1(filterGeoJsonByFloor(dataGeoJSON, "S1"));
+    }
+  }, [dataGeoJSON]);
+  
+      
   return (
     <div className="h-screen w-screen bg-white flex flex-col items-center justify-center gap-8">
        <h1 className="text-5xl font-bold text-primary mt-2">Floor {floor}</h1>
@@ -231,7 +285,7 @@ export const Home = () => {
         />
 
         {/* Fit the map bounds to the GeoJSON */}
-        <FitBounds geoJson={dataGeoJSONFloor0} setBounds={setBounds} />
+        <FitBounds geoJson={dataGeoJSON} setBounds={setBounds} />
         {bounds && <RestrictBounds bounds={bounds} />}
 
         {/* Custom GeoJSON layer */}
