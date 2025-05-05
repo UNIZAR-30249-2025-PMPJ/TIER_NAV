@@ -8,9 +8,12 @@ import LoginPage from '../Pages/LogIn';
 import SearchRooms from '../Pages/SearchRooms';
 import Layout from '../layout/Layout';
 import MySpace from '../Pages/MySpace';
-import RoomDetails from '../Pages/RoomDetails';
-import BookRoom from '../Pages/BookRoom';
+import RoomBooking from '../Pages/RoomBooking';
 import BookingSuccess from '../Pages/BookingSuccess';
+import RoomList from '../Pages/RoomList';
+import { RoomSelectionProvider } from '../contexts/RoomSelectionContext';
+import { AvailableRoomsProvider } from '../contexts/AvailableRoomsContext';
+import { UserProvider } from '../contexts/UserContext';
 
 
 const RouterPrincipal = () => {
@@ -34,31 +37,29 @@ const RouterPrincipal = () => {
   }
 
   return (
-        <Router>
-          <Routes>
-            <Route path={routes.byronhub} element={<ByronHub/>} />
-            <Route path={routes.login} element={<LoginPage />} />
-            <Route path="*" element={<NotFound />} />
-
-            <Route path="/" element={<Layout />} >
-              {/* Example of private and admin routes */}
-              {/*<Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>} />*/}
-              <Route path={routes.home} element={<Home/>} />
-            
-              {/* <Route path={routes.searchrooms} element={<PrivateRoute><SearchRooms/></PrivateRoute>} /> */}
-              <Route path={routes.searchrooms} element={<SearchRooms/>} />
-
-              <Route path={routes.myspace} element={<MySpace/>} />
-
-              <Route path={routes.roomdetails} element={<RoomDetails/>} />
-
-              <Route path={routes.bookroom} element={<BookRoom/>} />
-
-              <Route path={routes.bookingsuccess} element={<BookingSuccess/>} />
-            </Route>
-          </Routes>
-        </Router>
-  );
+    <UserProvider>
+      <RoomSelectionProvider>
+        <AvailableRoomsProvider>
+          <Router>
+            <Routes>
+              <Route path={routes.byronhub} element={<ByronHub />} />
+              <Route path={routes.login} element={<LoginPage />} />
+              <Route path="*" element={<NotFound />} />
+    
+              <Route path="/" element={<Layout />} >
+                <Route path={routes.home} element={<Home />} />
+                <Route path={routes.myspace} element={<MySpace />} />
+                <Route path={routes.searchrooms} element={<SearchRooms />} />
+                <Route path={routes.roomlist} element={<RoomList />} />
+                <Route path={routes.roomdetails} element={<RoomBooking />} />
+                <Route path={routes.bookingsuccess} element={<BookingSuccess />} />
+              </Route>
+            </Routes>
+          </Router>
+        </AvailableRoomsProvider>
+      </RoomSelectionProvider>
+    </UserProvider>
+  );  
 }
 
 export default RouterPrincipal;

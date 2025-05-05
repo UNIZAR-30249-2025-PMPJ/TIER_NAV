@@ -4,9 +4,9 @@ const routes = {
     searchrooms: '/searchrooms',
     home : '/home',
     myspace : '/myspace',
-    roomdetails : '/room/:id',
-    bookroom : '/bookroom',
+    roomdetails : '/roomdetails',
     bookingsuccess : '/bookingsuccess',
+    roomlist : '/roomlist',
 };
 
 export {routes};

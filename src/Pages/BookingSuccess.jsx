@@ -1,60 +1,49 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { routes } from '../utils/constants';
+import { useRoomSelection } from '../contexts/RoomSelectionContext';
 
 const BookingSuccess = () => {
-    const { state } = useLocation();
-    const navigate = useNavigate();
+    const { selectedRooms } = useRoomSelection();
 
-    console.log('Booking success state:', state);
-    const {
-        identifier,
-        category,
-        people,
-        date,
-        start,
-        end,
-    } = state?.booking || {};
-
+    const getEndTime = (start, duration) => {
+        const [hours, minutes] = start.split(':').map(Number);
+        const startDate = new Date();
+        startDate.setHours(hours, minutes);
+        const endDate = new Date(startDate.getTime() + parseInt(duration, 10) * 60000);
+        return endDate.toTimeString().slice(0, 5);
+    };
+    
     return (
-        <div className="flex flex-col items-center justify-center h-screen px-4 text-secondary">
-            <h1 className="text-3xl font-bold text-center text-primary mb-10">
+        <div className="p-10 flex flex-col items-center gap-10 text-secondary">
+            <h2 className="text-2xl font-semibold text-center">
                 Your booking has been completed successfully
-            </h1>
+            </h2>
 
-            <div className="text-lg space-y-2 text-center">
-                <p>
-                    <span className="font-medium">Identifier</span>{' '}
-                    <span className="font-semibold text-black">{identifier}</span>
-                </p>
-                <p>
-                    <span className="font-medium">Category</span>{' '}
-                    <span className="font-semibold text-black">{category}</span>
-                </p>
-                <p>
-                    <span className="font-medium">People</span>{' '}
-                    <span className="font-semibold text-black">{people}</span>
-                </p>
-                <p>
-                    <span className="font-medium">Date</span>{' '}
-                    <span className="font-semibold text-black">{date}</span>
-                </p>
-                <p>
-                    <span className="font-medium">Start</span>{' '}
-                    <span className="font-semibold text-black">{start}</span>
-                </p>
-                <p>
-                    <span className="font-medium">End</span>{' '}
-                    <span className="font-semibold text-black">{end}</span>
-                </p>
+            <div className="bg-gray-100 rounded-xl p-6 shadow-md w-full max-w-3xl">
+                <table className="w-full text-left">
+                    <thead>
+                        <tr className="border-b border-gray-300">
+                            <th className="pb-2">Name</th>
+                            <th className="pb-2">Category</th>
+                            <th className="pb-2">People</th>
+                            <th className="pb-2">Date</th>
+                            <th className="pb-2">Start</th>
+                            <th className="pb-2">End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {selectedRooms.map((room, index) => (
+                            <tr key={index} className="border-b border-gray-200">
+                                <td className="py-2">{room.name}</td>
+                                <td className="py-2">{room.category}</td>
+                                <td className="py-2">{room.people}</td>
+                                <td className="py-2">{room.date}</td>
+                                <td className="py-2">{room.start}</td>
+                                <td className="py-2">{getEndTime(room.start, room.duration)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-
-            <button
-                onClick={() => navigate(routes.myspace)}
-                className="mt-10 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary transition duration-300"
-            >
-                Go to My Bookings
-            </button>
         </div>
     );
 };
