@@ -1,7 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Url } from "../utils/url";
 
 const Calendar = ({ bookings, setTime }) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [holidays, setHolidays] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const response = await fetch(`${Url}/buildings`);
+        if (response.ok) {
+          const json = await response.json();
+          const holidays = json[0]?.holidays || [];
+          setHolidays(holidays);
+        }
+      } catch (error) {
+        console.error("Error fetching holidays:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHolidays();
+  }, []);
 
   const getWeekDays = (date) => {
     const startOfWeek = new Date(date);
@@ -44,6 +65,14 @@ const Calendar = ({ bookings, setTime }) => {
   const weekDays = getWeekDays(currentWeek);
   const hours = generateHours();
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-lg font-semibold text-secondary">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-white shadow-xl border-secondary border rounded-xl w-full h-[93%] -mt-18 overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
@@ -64,35 +93,51 @@ const Calendar = ({ bookings, setTime }) => {
 
       <div className="grid grid-cols-5 gap-4 min-w-[1000px] h-[93%]">
         {weekDays.map((day) => {
-            const dayOfWeek = day.toLocaleString("default", { weekday: "long" });
+          const isHoliday = holidays.some((holiday) => {
+            const holidayDate = new Date(holiday);
+            return (
+              holidayDate.getDate() === day.getDate() &&
+              holidayDate.getMonth() === day.getMonth() &&
+              holidayDate.getFullYear() === day.getFullYear()
+            );
+          });
+          if (isHoliday) {
+            return (
+              <div key={day} className="bg-gray-200 p-4 rounded shadow-md">
+                <h4 className="text-lg font-semibold text-secondary mb-2">Holiday</h4>
+                <p className="text-gray-700">This day is a holiday.</p>
+              </div>
+            );
+          }
+          const dayOfWeek = day.toLocaleString("default", { weekday: "long" });
           const formattedDate = formatDate(day);
           const dayBookings = bookings[formattedDate] || [];
           return (
             <div key={formattedDate} className="bg-third p-4 rounded shadow-md">
-              <h4 className="text-lg font-semibold text-secondary mb-2">{dayOfWeek} - {formattedDate}</h4>
+              <h4 className="text-lg font-semibold text-secondary mb-2">
+                {dayOfWeek} - {formattedDate}
+              </h4>
               <ul className="space-y-1 max-h-[780px] overflow-y-auto scrollbar-hidden">
                 {hours.map((hour, index) => {
                   const isBooked = dayBookings.includes(hour);
                   return (
                     <li
-                        key={index}
-                        onClick={() => {
-                            if (!isBooked) {
-                                //Date is like this 01/05/2025 and is needed to be like this 2025-05-01
-                                const dateParts = formattedDate.split("/");
-                                const newDate = `${dateParts[2]}-${dateParts[1].padStart(2, "0")}-${dateParts[0].padStart(2, "0")}`;
-                                setTime({ date: newDate, time: hour });
-                            }
-                        }}
-                        className={`p-2 rounded border text-sm cursor-pointer transition ${
-                            isBooked
-                            ? "bg-green-100 text-green-800 border-green-300 font-medium cursor-not-allowed"
-                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                        }`}
-                        >
-                        {hour} {isBooked && <span>(Booked)</span>}
-                        </li>
-
+                      key={index}
+                      onClick={() => {
+                        if (!isBooked) {
+                          const dateParts = formattedDate.split("/");
+                          const newDate = `${dateParts[2]}-${dateParts[1].padStart(2, "0")}-${dateParts[0].padStart(2, "0")}`;
+                          setTime({ date: newDate, time: hour });
+                        }
+                      }}
+                      className={`p-2 rounded border text-sm cursor-pointer transition ${
+                        isBooked
+                          ? "bg-green-100 text-green-800 border-green-300 font-medium cursor-not-allowed"
+                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                      }`}
+                    >
+                      {hour} {isBooked && <span>(Booked)</span>}
+                    </li>
                   );
                 })}
               </ul>

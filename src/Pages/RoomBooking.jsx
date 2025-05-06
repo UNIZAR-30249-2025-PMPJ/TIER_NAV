@@ -72,7 +72,7 @@ const RoomBooking = () => {
     const [bookedTimes, setBookedTimes] = useState({});
     const { id: roomId } = useParams();
     const room = availableRooms.find((room) => room.id === roomId);
-    
+   
 
     const [form, setForm] = useState({
         use: '',
@@ -184,7 +184,6 @@ const RoomBooking = () => {
     if (!room) {
         return <div className="text-center mt-20 text-red-500">Room not found.</div>;
     }
-
     return (
         <div className="p-10 flex flex-row items-stretch gap-10 text-secondary min-h-screen">
         {/* Left side: HourGridCalendar taking 2/3 of the space */}
