@@ -45,7 +45,7 @@ const Calendar = ({ bookings, setTime }) => {
   const hours = generateHours();
 
   return (
-    <div className="p-6 bg-white shadow rounded-xl w-full overflow-x-auto">
+    <div className="p-6 bg-white shadow-xl border-secondary border rounded-xl w-full h-[93%] -mt-18 overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={handlePreviousWeek}
@@ -62,7 +62,7 @@ const Calendar = ({ bookings, setTime }) => {
         </button>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 min-w-[1000px]">
+      <div className="grid grid-cols-5 gap-4 min-w-[1000px] h-[93%]">
         {weekDays.map((day) => {
 
           const formattedDate = formatDate(day);
@@ -70,7 +70,7 @@ const Calendar = ({ bookings, setTime }) => {
           return (
             <div key={formattedDate} className="bg-third p-4 rounded shadow-md">
               <h4 className="text-lg font-semibold text-secondary mb-2">{formattedDate}</h4>
-              <ul className="space-y-1 max-h-[600px] overflow-y-auto scrollbar-hidden">
+              <ul className="space-y-1 max-h-[780px] overflow-y-auto scrollbar-hidden">
                 {hours.map((hour, index) => {
                   const isBooked = dayBookings.includes(hour);
                   return (

@@ -7,7 +7,7 @@ import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
 import Calendar  from '../Components/Calendar';
 
 const RoomInfo = ({ room }) => (
-    <div className="flex flex-col gap-2 text-lg w-full">
+    <div className="flex flex-col gap-2 text-lg w-full bg-white border border-secondary rounded-xl p-6 shadow-xl">
         {['name', 'category', 'capacity', 'floor'].map((key) => (
             <div key={key}>
                 <span className="font-medium text-blue-500">{key.charAt(0).toUpperCase() + key.slice(1)}</span>{' '}
@@ -20,7 +20,7 @@ const RoomInfo = ({ room }) => (
 const BookingForm = ({ form, handleChange, handleSubmit }) => (
     <form
         onSubmit={handleSubmit}
-        className="bg-gray-100 rounded-xl p-6 shadow-md text-lg w-full flex flex-col gap-4"
+        className="bg-white border border-secondary rounded-xl p-6 shadow-xl text-lg w-full flex flex-col gap-4"
     >
         {[
             { label: 'Use', name: 'use', type: 'text' },
