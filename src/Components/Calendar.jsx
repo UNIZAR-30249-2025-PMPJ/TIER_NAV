@@ -64,12 +64,12 @@ const Calendar = ({ bookings, setTime }) => {
 
       <div className="grid grid-cols-5 gap-4 min-w-[1000px] h-[93%]">
         {weekDays.map((day) => {
-
+            const dayOfWeek = day.toLocaleString("default", { weekday: "long" });
           const formattedDate = formatDate(day);
           const dayBookings = bookings[formattedDate] || [];
           return (
             <div key={formattedDate} className="bg-third p-4 rounded shadow-md">
-              <h4 className="text-lg font-semibold text-secondary mb-2">{formattedDate}</h4>
+              <h4 className="text-lg font-semibold text-secondary mb-2">{dayOfWeek} - {formattedDate}</h4>
               <ul className="space-y-1 max-h-[780px] overflow-y-auto scrollbar-hidden">
                 {hours.map((hour, index) => {
                   const isBooked = dayBookings.includes(hour);
