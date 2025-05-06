@@ -4,7 +4,7 @@ import { routes } from '../utils/constants';
 import { Url } from '../utils/url';
 import { SearchRoomsContext } from '../contexts/SearchRoomsContext';
 import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
-import { Calendar } from '../Components/Calendar';
+import Calendar  from '../Components/Calendar';
 
 const RoomInfo = ({ room }) => (
     <div className="flex flex-col gap-2 text-lg w-full">
@@ -62,59 +62,6 @@ const BookingForm = ({ form, handleChange, handleSubmit }) => (
         </div>
     </form>
 );
-
-const HourGridCalendar = ({ bookedTimes }) => {
-    const generateHalfHours = () => {
-        const times = [];
-        for (let i = 8; i < 20; i++) {
-            times.push(`${i.toString().padStart(2, '0')}:00`);
-            times.push(`${i.toString().padStart(2, '0')}:30`);
-        }
-        times.push('20:00');
-        return times;
-    };
-
-    const sortedDates = [...Object.keys(bookedTimes)].sort((a, b) => {
-        const [dayA, monthA, yearA] = a.split('/').map(Number);
-        const [dayB, monthB, yearB] = b.split('/').map(Number);
-        return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
-    });
-
-    return (
-        <div className="overflow-x-auto w-full max-w-5xl bg-gray-100 rounded-xl shadow-md">
-            {Object.keys(bookedTimes).length === 0 ? (
-                <div className="text-center py-6 text-gray-500 font-medium">
-                    No reservations found for this room.
-                </div>
-            ) : (
-                <div className="grid" style={{ gridTemplateColumns: `80px repeat(${sortedDates.length}, 1fr)` }}>
-                    <div className="border border-gray-600 bg-white"></div>
-                    {sortedDates.map((date) => (
-                        <div key={date} className="border border-gray-600 text-center py-2 font-semibold">
-                            {date}
-                        </div>
-                    ))}
-                    {generateHalfHours().map((time) => (
-                        <React.Fragment key={time}>
-                            <div className="border text-right pr-2 text-sm text-gray-600 h-6 flex items-center justify-end">
-                                {time}
-                            </div>
-                            {sortedDates.map((date) => {
-                                const isBooked = bookedTimes[date]?.includes(time);
-                                return (
-                                    <div
-                                        key={date + time}
-                                        className={`border border-gray-400 h-6 ${isBooked ? 'bg-gray-300' : 'bg-white'}`}
-                                    ></div>
-                                );
-                            })}
-                        </React.Fragment>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
 
 const RoomBooking = () => {
     const navigate = useNavigate();
@@ -239,7 +186,7 @@ const RoomBooking = () => {
         <div className="p-10 flex flex-row items-stretch gap-10 text-secondary min-h-screen">
         {/* Left side: HourGridCalendar taking 2/3 of the space */}
         <div className="w-2/3 flex justify-center items-center">
-            <Calendar bookedTimes={bookedTimes} />
+            <Calendar bookings={bookedTimes} />
         </div>
         
         {/* Right side: RoomInfo and BookingForm stacked, taking 1/3 of the space */}
