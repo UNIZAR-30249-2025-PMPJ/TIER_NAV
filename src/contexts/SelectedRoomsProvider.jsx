@@ -27,7 +27,6 @@ export const SelectedRoomsProvider = ({ children }) => {
   };
   const removeRoom = (room) => {
     // Filter out the room to be removed checking by id, name, and date
-    console.log("Removing room:", room);
     setSelectedRooms((prev) =>
       prev.filter(
       (r) =>

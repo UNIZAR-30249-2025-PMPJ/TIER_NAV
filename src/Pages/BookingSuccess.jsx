@@ -1,8 +1,19 @@
-import React from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
+import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
 
 const BookingSuccess = () => {
-    const selectedRooms= []
+    const {selectedRooms, clearRooms}= useContext(SelectedRoomsContext);
+    const [books, setBooks] = useState([]);
+
+    //Set the books to the selected rooms and clear the selected rooms
+   
+
+    // Call the handleBooking function when the component mounts
+    
+    useEffect(() => {
+        setBooks(selectedRooms);
+        clearRooms();
+    }, []);
 
     const getEndTime = (start, duration) => {
         const [hours, minutes] = start.split(':').map(Number);
@@ -31,7 +42,7 @@ const BookingSuccess = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {selectedRooms.map((room, index) => (
+                        {books.map((room, index) => (
                             <tr key={index} className="border-b border-gray-200">
                                 <td className="py-2">{room.name}</td>
                                 <td className="py-2">{room.category}</td>

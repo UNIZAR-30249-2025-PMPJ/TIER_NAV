@@ -113,7 +113,6 @@ const RoomBooking = () => {
                     });
 
                     setBookedTimes(result);
-                    console.log('Booked times:', result);
                 }
             
         };

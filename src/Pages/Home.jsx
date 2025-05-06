@@ -72,7 +72,6 @@ const GeoJSONLayer = ({ geoJson }) => {
     const geoJsonLayer = L.geoJSON(geoJson, {
       style: getGeoJsonStyle,
       onEachFeature: (feature, layer) => {
-        console.log(feature.properties);
         const assignedTo = feature.properties.assignedTo || feature.properties.assignedToBuildingId || feature.properties.assignedToPersonId; 
         layer.on('mouseover', () => {
           const { name, reservabilityCategory } = feature.properties;
