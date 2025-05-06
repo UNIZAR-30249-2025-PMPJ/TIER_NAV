@@ -10,8 +10,8 @@ const RoomInfo = ({ room }) => (
     <div className="flex flex-col gap-2 text-lg w-full bg-white border border-secondary rounded-xl p-6 shadow-xl">
         {['name', 'category', 'capacity', 'floor'].map((key) => (
             <div key={key}>
-                <span className="font-medium text-blue-500">{key.charAt(0).toUpperCase() + key.slice(1)}</span>{' '}
-                <span className="text-black font-semibold">{room[key]}</span>
+                <span className="font-semibold text-secondary">{key.charAt(0).toUpperCase() + key.slice(1)}</span>{' '}
+                <span className="text-black font-medium">{room[key]}</span>
             </div>
         ))}
     </div>
