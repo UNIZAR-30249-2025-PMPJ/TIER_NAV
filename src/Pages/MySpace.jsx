@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useUser } from '../contexts/UserContext';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../contexts/UserContext';
 import { Url } from '../utils/url';
 
 const MySpace = () => {
-  const { user } = useUser();
+ const { user } = useContext(UserContext);
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const MySpace = () => {
       if (!user || !user.id) return;
 
       try {
-        const response = await fetch(`${Url}/api/reservations?personId=${user.id}`);
+        const response = await fetch(`${Url}/reservations?personId=${user.id}`);
         const json = await response.json();
 
         const formatted = json.map(res => {

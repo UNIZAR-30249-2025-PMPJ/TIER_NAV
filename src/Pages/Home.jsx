@@ -72,8 +72,9 @@ const GeoJSONLayer = ({ geoJson }) => {
     const geoJsonLayer = L.geoJSON(geoJson, {
       style: getGeoJsonStyle,
       onEachFeature: (feature, layer) => {
+        const assignedTo = feature.properties.assignedTo || feature.properties.assignedToBuildingId || feature.properties.assignedToPersonId; 
         layer.on('mouseover', () => {
-          const { name, reservabilityCategory, assignedTo } = feature.properties;
+          const { name, reservabilityCategory } = feature.properties;
           const popupContent = `
             <strong>Name:</strong> ${name} <br/>
             <strong>Category:</strong> ${reservabilityCategory} <br/>
