@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Calendar = ({ bookings }) => {
+const Calendar = ({ bookings, setTime }) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
 
   const getWeekDays = (date) => {
@@ -64,6 +64,7 @@ const Calendar = ({ bookings }) => {
 
       <div className="grid grid-cols-5 gap-4 min-w-[1000px]">
         {weekDays.map((day) => {
+
           const formattedDate = formatDate(day);
           const dayBookings = bookings[formattedDate] || [];
           return (
@@ -74,15 +75,24 @@ const Calendar = ({ bookings }) => {
                   const isBooked = dayBookings.includes(hour);
                   return (
                     <li
-                      key={index}
-                      className={`p-2 rounded border text-sm ${
-                        isBooked
-                          ? "bg-green-100 text-green-800 border-green-300 font-medium"
-                          : "bg-white text-gray-700 border-gray-300"
-                      }`}
-                    >
-                      {hour} {isBooked && <span>(Booked)</span>}
-                    </li>
+                        key={index}
+                        onClick={() => {
+                            if (!isBooked) {
+                                //Date is like this 01/05/2025 and is needed to be like this 2025-05-01
+                                const dateParts = formattedDate.split("/");
+                                const newDate = `${dateParts[2]}-${dateParts[1].padStart(2, "0")}-${dateParts[0].padStart(2, "0")}`;
+                                setTime({ date: newDate, time: hour });
+                            }
+                        }}
+                        className={`p-2 rounded border text-sm cursor-pointer transition ${
+                            isBooked
+                            ? "bg-green-100 text-green-800 border-green-300 font-medium cursor-not-allowed"
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                        }`}
+                        >
+                        {hour} {isBooked && <span>(Booked)</span>}
+                        </li>
+
                   );
                 })}
               </ul>

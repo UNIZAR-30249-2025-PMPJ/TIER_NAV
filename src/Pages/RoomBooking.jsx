@@ -37,10 +37,12 @@ const BookingForm = ({ form, handleChange, handleSubmit }) => (
                     value={form[name]}
                     onChange={handleChange}
                     placeholder={placeholder}
+                    readOnly={name === 'date' || name === 'start'}
                     className="border border-gray-300 rounded px-3 py-2 text-black"
                 />
             </div>
         ))}
+        
 
         <div className="flex flex-col gap-2">
             <label className="font-medium">Comments</label>
@@ -70,6 +72,7 @@ const RoomBooking = () => {
     const [bookedTimes, setBookedTimes] = useState({});
     const { id: roomId } = useParams();
     const room = availableRooms.find((room) => room.id === roomId);
+    
 
     const [form, setForm] = useState({
         use: '',
@@ -186,7 +189,9 @@ const RoomBooking = () => {
         <div className="p-10 flex flex-row items-stretch gap-10 text-secondary min-h-screen">
         {/* Left side: HourGridCalendar taking 2/3 of the space */}
         <div className="w-2/3 flex justify-center items-center">
-            <Calendar bookings={bookedTimes} />
+            <Calendar bookings={bookedTimes}  setTime={({ date, time }) => {
+  setForm(prev => ({ ...prev, date, start: time }));
+}} />
         </div>
         
         {/* Right side: RoomInfo and BookingForm stacked, taking 1/3 of the space */}
