@@ -7,9 +7,11 @@ import { routes } from '../utils/constants';
 import { UserContext } from '../contexts/UserContext';
 import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
 import ItemSelectedRoom from './ItemSelectedRoom';
+import { SearchRoomsContext } from '../contexts/SearchRoomsContext';
 
 const RoomsSelected = () => {
-  const {selectedRooms, removeRoom} = useContext(SelectedRoomsContext);
+  const {selectedRooms, removeRoom, clearRooms} = useContext(SelectedRoomsContext);
+  const {clearAvailableRooms} = useContext(SearchRoomsContext);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -48,6 +50,8 @@ const RoomsSelected = () => {
         }
       }
 
+      clearAvailableRooms();
+      clearRooms();
       navigate(routes.bookingsuccess);
     } catch (error) {
       console.error('Booking error:', error);

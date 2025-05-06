@@ -4,6 +4,7 @@ import { routes } from '../utils/constants';
 import { Url } from '../utils/url';
 import { SearchRoomsContext } from '../contexts/SearchRoomsContext';
 import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
+import { Calendar } from '../Components/Calendar';
 
 const RoomInfo = ({ room }) => (
     <div className="flex flex-col gap-2 text-lg w-full">
@@ -24,9 +25,9 @@ const BookingForm = ({ form, handleChange, handleSubmit }) => (
         {[
             { label: 'Use', name: 'use', type: 'text' },
             { label: 'Number of people', name: 'people', type: 'number' },
-            { label: 'Start', name: 'start', type: 'text', placeholder: 'ex: 08:30' },
+            { label: 'Start', name: 'start', type: 'time', placeholder: 'ex: 08:30' },
             { label: 'Duration (minutes)', name: 'duration', type: 'text' },
-            { label: 'Date', name: 'date', type: 'text', placeholder: 'ex: 01/05/2025' },
+            { label: 'Date', name: 'date', type: 'date', placeholder: 'ex: 01/05/2025' },
         ].map(({ label, name, type, placeholder }) => (
             <div className="flex flex-col gap-2" key={name}>
                 <label className="font-medium">{label}</label>
@@ -40,6 +41,7 @@ const BookingForm = ({ form, handleChange, handleSubmit }) => (
                 />
             </div>
         ))}
+
         <div className="flex flex-col gap-2">
             <label className="font-medium">Comments</label>
             <textarea
@@ -161,6 +163,7 @@ const RoomBooking = () => {
                     });
 
                     setBookedTimes(result);
+                    console.log('Booked times:', result);
                 }
             
         };
@@ -174,15 +177,17 @@ const RoomBooking = () => {
     };
 
     const handleSubmit = (e) => {
+
         e.preventDefault();
 
-        const { start, duration, date, people } = form;
-
-        if (!start || !duration || !date || !people) {
-            alert('Please fill in Start, Duration, Date and Number of people.');
+        const { start, duration, date, people, use } = form;
+        if (!start || !duration || !date || !people || !use) {
+            alert('Please fill in Start, Duration, Date, Use and Number of people.');
             return;
         }
-
+        //date is in YYYY-MM-DD format and we need to convert it to DD/MM/YYYY
+        const [year, month, day] = date.split('-');
+        const formattedDate = `${day}/${month}/${year}`;
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
         const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 
@@ -191,7 +196,7 @@ const RoomBooking = () => {
             return;
         }
 
-        if (!dateRegex.test(date)) {
+        if (!dateRegex.test(formattedDate)) {
             alert('Date must be in DD/MM/YYYY format (e.g. 01/05/2025).');
             return;
         }
@@ -234,7 +239,7 @@ const RoomBooking = () => {
         <div className="p-10 flex flex-row items-stretch gap-10 text-secondary min-h-screen">
         {/* Left side: HourGridCalendar taking 2/3 of the space */}
         <div className="w-2/3 flex justify-center items-center">
-            <HourGridCalendar bookedTimes={bookedTimes} />
+            <Calendar bookedTimes={bookedTimes} />
         </div>
         
         {/* Right side: RoomInfo and BookingForm stacked, taking 1/3 of the space */}

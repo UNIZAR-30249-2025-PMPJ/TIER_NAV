@@ -1,8 +1,8 @@
 import React from 'react';
-import { useRoomSelection } from '../contexts/RoomSelectionContext';
+
 
 const BookingSuccess = () => {
-    const { selectedRooms } = useRoomSelection();
+    const selectedRooms= []
 
     const getEndTime = (start, duration) => {
         const [hours, minutes] = start.split(':').map(Number);
