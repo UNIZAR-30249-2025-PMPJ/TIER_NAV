@@ -13,6 +13,7 @@ import BookingSuccess from '../Pages/BookingSuccess';
 import { UserProvider } from '../contexts/UserProvider';
 import { SearchRoomsProvider } from '../contexts/SearchRoomsProvider';
 import { SelectedRoomsProvider } from '../contexts/SelectedRoomsProvider';
+import { Notifications } from '../Pages/Notifications';
 
 
 
@@ -54,6 +55,7 @@ const RouterPrincipal = () => {
                 <Route path={routes.searchrooms} element={<Search />} />
                 <Route path={routes.roomdetails} element={<RoomBooking />} />
                 <Route path={routes.bookingsuccess} element={<BookingSuccess />} />
+                <Route path={routes.notifications} element={<Notifications />} />
               </Route>
             </Routes>
           </Router>

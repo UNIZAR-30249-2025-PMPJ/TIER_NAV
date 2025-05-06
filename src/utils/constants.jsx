@@ -7,6 +7,7 @@ const routes = {
     roomdetails : '/roomdetails/:id',
     bookingsuccess : '/bookingsuccess',
     roomlist : '/roomlist',
+    notifications: '/notifications',
 };
 
 export {routes};
