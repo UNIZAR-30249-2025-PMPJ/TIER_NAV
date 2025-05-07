@@ -31,6 +31,7 @@ const ManageBookings = () => {
           identifier: res.spaceId,
           userId: res.personId,
           people: res.maxAttendees,
+          state: res.state,
           date: start.toLocaleDateString('es-ES'),
           start: start.toTimeString().slice(0, 5),
           end: end.toTimeString().slice(0, 5),
@@ -65,6 +66,29 @@ const ManageBookings = () => {
     }
   };
 
+  const updateState = async (id, newState) => {
+    try {
+      const response = await fetch(`${Url}/reservations/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ state: newState }),
+      });
+
+      if (response.ok) {
+        setBookings(prev =>
+          prev.map(b => (b.id === id ? { ...b, state: newState } : b))
+        );
+      } else {
+        console.error('Failed to update booking state.');
+      }
+    } catch (err) {
+      console.error('Error updating booking state:', err);
+    }
+  };
+
   if (!user || user.role !== 'Manager') {
     return <div className="p-10 text-center text-red-500">Access denied. Manager only.</div>;
   }
@@ -82,7 +106,7 @@ const ManageBookings = () => {
               <th className="pb-2">Date</th>
               <th className="pb-2">Start</th>
               <th className="pb-2">End</th>
-              <th className="pb-2">Actions</th>
+              <th className="pb-2">State</th>
             </tr>
           </thead>
           <tbody>
@@ -95,6 +119,16 @@ const ManageBookings = () => {
                 <td className="py-2">{booking.start}</td>
                 <td className="py-2">{booking.end}</td>
                 <td className="py-2">
+                  <select
+                    value={booking.state}
+                    onChange={(e) => updateState(booking.id, e.target.value)}
+                    className="bg-white border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Potentially invalid">Potentially invalid</option>
+                  </select>
+                </td>
+                <td className="py-2">
                   <button
                     onClick={() => deleteBooking(booking.id)}
                     className="text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition"
@@ -106,7 +140,7 @@ const ManageBookings = () => {
             ))}
             {bookings.length === 0 && (
               <tr>
-                <td colSpan="7" className="text-center py-4 text-gray-500">
+                <td colSpan="8" className="text-center py-4 text-gray-500">
                   No bookings found.
                 </td>
               </tr>
