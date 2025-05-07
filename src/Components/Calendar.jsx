@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Url } from "../utils/url";
+import { UserContext } from "../contexts/UserContext";
 
 const Calendar = ({ bookings, setTime }) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {user} = useContext(UserContext);
+
 
   useEffect(() => {
     const fetchHolidays = async () => {
@@ -120,25 +123,28 @@ const Calendar = ({ bookings, setTime }) => {
               <ul className="space-y-1 max-h-[780px] overflow-y-auto scrollbar-hidden">
                 {hours.map((hour, index) => {
                   const isBooked = dayBookings.includes(hour);
-                  return (
+                    return (
                     <li
                       key={index}
                       onClick={() => {
-                        if (!isBooked) {
-                          const dateParts = formattedDate.split("/");
-                          const newDate = `${dateParts[2]}-${dateParts[1].padStart(2, "0")}-${dateParts[0].padStart(2, "0")}`;
-                          setTime({ date: newDate, time: hour });
-                        }
+                      if (!isBooked || user.role === "Manager") {
+                        const [day, month, year] = formattedDate.split("/");
+                        const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+                        setTime({ date: newDate, time: hour });
+                      }
                       }}
                       className={`p-2 rounded border text-sm cursor-pointer transition ${
-                        isBooked
-                          ? "bg-green-100 text-green-800 border-green-300 font-medium cursor-not-allowed"
-                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                      isBooked
+                        ? user.role === "Manager"
+                        ? "bg-green-100 text-green-800 border-green-300 font-medium hover:bg-green-300"
+                        : "bg-green-100 text-green-800 border-green-300 cursor-not-allowed"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                       }`}
+                      title={isBooked ? (user.role === "Manager" ? "Click to manage booking" : "Already booked") : "Available"}
                     >
                       {hour} {isBooked && <span>(Booked)</span>}
                     </li>
-                  );
+                    );
                 })}
               </ul>
             </div>
