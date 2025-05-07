@@ -102,7 +102,7 @@ const ManageBookings = () => {
             <tr className="border-b border-blue-300">
               <th className="pb-2">Space</th>
               <th className="pb-2">User ID</th>
-              <th className="pb-2">Peoples</th>
+              <th className="pb-2">People</th>
               <th className="pb-2">Date</th>
               <th className="pb-2">Start</th>
               <th className="pb-2">End</th>
@@ -124,8 +124,8 @@ const ManageBookings = () => {
                     onChange={(e) => updateState(booking.id, e.target.value)}
                     className="bg-white border border-gray-300 rounded px-2 py-1"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Potentially invalid">Potentially invalid</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="POTENTIALY_INVALID">Potentially invalid</option>
                   </select>
                 </td>
                 <td className="py-2">

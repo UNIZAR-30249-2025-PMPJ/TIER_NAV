@@ -84,7 +84,7 @@ const MySpace = () => {
           <thead>
             <tr className="border-b border-blue-300">
               <th className="pb-2">Identifier</th>
-              <th className="pb-2">Peoples</th>
+              <th className="pb-2">People</th>
               <th className="pb-2">Date</th>
               <th className="pb-2">Start</th>
               <th className="pb-2">End</th>
