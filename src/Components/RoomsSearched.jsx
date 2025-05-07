@@ -9,7 +9,6 @@ const ITEMS_PER_PAGE = 5;
 const RoomsSearched = () => {
   const  { availableRooms }  = useContext(SearchRoomsContext);
   const navigate = useNavigate();
-  console.log(availableRooms);
 
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(availableRooms.length / ITEMS_PER_PAGE);
