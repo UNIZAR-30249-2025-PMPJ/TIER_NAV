@@ -1,12 +1,7 @@
+import { useEffect, useState } from "react";
+import { UserContext } from "./UserContext";
 
-
-import { useEffect, useState } from "react"
-import { UserContext } from "./UserContext"
-
-
-export const UserProvider = ({children}) => {
-
-  //Basic user data
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({
     id: '',
     name: '',
@@ -19,37 +14,43 @@ export const UserProvider = ({children}) => {
     setUser(null);
   };
 
-   // Function to decode JWT
-   const decodeJWT = (token) => {
-    const payload = token.split('.')[1]; // Obtener la parte del payload
-    const decodedPayload = atob(payload); // Decodificar en Base64
-    return JSON.parse(decodedPayload); // Parsear el JSON
+  const decodeJWT = (token) => {
+    const payload = token.split('.')[1];
+    const decodedPayload = atob(payload);
+    return JSON.parse(decodedPayload);
   };
 
-  //Read from localStorage
+  const login = (token) => {
+    try {
+      const decodedUser = decodeJWT(token);
+      localStorage.setItem('token', token);
+      setUser(decodedUser);
+    } catch (err) {
+      console.error('Login error - invalid token:', err);
+    }
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       try {
-        // Decode the JWT and set user data
         const decodedUser = decodeJWT(storedToken);
         setUser(decodedUser);
       } catch (error) {
-        console.error('Error al decodificar el token:', error);
+        console.error('Error decoding token on mount:', error);
       }
     }
   }, []);
 
-
-
-    // Save user data to localStorage
-    useEffect(() => {
-        localStorage.setItem('user', JSON.stringify(user));
-    }, [user]);
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }, [user]);
 
   return (
-    <UserContext.Provider value={{user,setUser, logout}}>
-        {children}
+    <UserContext.Provider value={{ user, setUser, logout, login }}>
+      {children}
     </UserContext.Provider>
-  )
-}
+  );
+};
