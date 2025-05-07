@@ -14,7 +14,11 @@ const MySpace = () => {
     if (!user || !user.id) return;
 
     try {
-      const response = await fetch(`${Url}/reservations?personId=${user.id}`);
+      const response = await fetch(`${Url}/reservations?personId=${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
       const json = await response.json();
 
       const formatted = json.map(res => {

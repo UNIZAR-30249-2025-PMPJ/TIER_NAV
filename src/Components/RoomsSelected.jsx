@@ -33,6 +33,7 @@ const RoomsSelected = () => {
         const response = await fetch(`${Url}/reservations`, {
           method: 'POST',
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -42,6 +43,7 @@ const RoomsSelected = () => {
             maxAttendees: parseInt(room.people),
             personId,
             spaceId: room.id,
+            description: room.comments,
           }),
         });
 

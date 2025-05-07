@@ -87,7 +87,11 @@ const RoomBooking = () => {
         const fetchReservations = async () => {
             if (!roomId) return;
             
-                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`);
+                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`, {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                  });
                 if (response.ok) {
                     
                     const json = await response.json();
@@ -129,9 +133,9 @@ const RoomBooking = () => {
 
         e.preventDefault();
 
-        const { start, duration, date, people, use } = form;
-        if (!start || !duration || !date || !people || !use) {
-            alert('Please fill in Start, Duration, Date, Use and Number of people.');
+        const { start, duration, date, people, use, comments } = form;
+        if (!start || !duration || !date || !people || !use || !comments.trim()) {
+            alert('Please fill in all fields.');
             return;
         }
         //date is in YYYY-MM-DD format and we need to convert it to DD/MM/YYYY
