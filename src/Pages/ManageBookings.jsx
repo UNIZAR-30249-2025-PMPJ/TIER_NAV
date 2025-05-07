@@ -125,7 +125,7 @@ const ManageBookings = () => {
                     className="bg-white border border-gray-300 rounded px-2 py-1"
                   >
                     <option value="ACTIVE">Active</option>
-                    <option value="POTENTIALY_INVALID">Potentially invalid</option>
+                    <option value="POTENTIALLY_INVALID">Potentially invalid</option>
                   </select>
                 </td>
                 <td className="py-2">
