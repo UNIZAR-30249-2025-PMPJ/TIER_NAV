@@ -3,39 +3,61 @@ import { UserContext } from '../contexts/UserContext';
 import { Url } from '../utils/url';
 
 const MySpace = () => {
- const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    const fetchUserBookings = async () => {
-      if (!user || !user.id) return;
-
-      try {
-        const response = await fetch(`${Url}/reservations?personId=${user.id}`);
-        const json = await response.json();
-
-        const formatted = json.map(res => {
-          const start = new Date(res.startTime);
-          const end = new Date(start.getTime() + res.duration * 60000);
-
-          return {
-            id: res.id,
-            identifier: res.spaceId,
-            people: res.maxAttendees,
-            date: start.toLocaleDateString('es-ES'),
-            start: start.toTimeString().slice(0, 5),
-            end: end.toTimeString().slice(0, 5),
-          };
-        });
-
-        setBookings(formatted);
-      } catch (err) {
-        console.error('Error fetching reservations:', err);
-      }
-    };
-
     fetchUserBookings();
   }, [user]);
+
+  const fetchUserBookings = async () => {
+    if (!user || !user.id) return;
+
+    try {
+      const response = await fetch(`${Url}/reservations?personId=${user.id}`);
+      const json = await response.json();
+
+      const formatted = json.map(res => {
+        const start = new Date(res.startTime);
+        const end = new Date(start.getTime() + res.duration * 60000);
+
+        return {
+          id: res.id,
+          identifier: res.spaceId,
+          people: res.maxAttendees,
+          date: start.toLocaleDateString('es-ES'),
+          start: start.toTimeString().slice(0, 5),
+          end: end.toTimeString().slice(0, 5),
+        };
+      });
+
+      setBookings(formatted);
+    } catch (err) {
+      console.error('Error fetching reservations:', err);
+    }
+  };
+
+  const deleteBooking = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to cancel this booking?');
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${Url}/reservations/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.ok) {
+        setBookings((prev) => prev.filter(b => b.id !== id));
+      } else {
+        console.error('Failed to delete booking.');
+      }
+    } catch (err) {
+      console.error('Error deleting booking:', err);
+    }
+  };
 
   if (!user) {
     return <div className="p-10 text-center text-red-500">User not connected.</div>;
@@ -46,15 +68,9 @@ const MySpace = () => {
       {/* User Info */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-primary mb-2">User info</h1>
-        <p className="text-lg text-black">
-          <span className="font-semibold">Name:</span> {user.name}
-        </p>
-        <p className="text-lg text-black">
-          <span className="font-semibold">Email:</span> {user.email}
-        </p>
-        <p className="text-lg text-black">
-          <span className="font-semibold">Role:</span> {user.role}
-        </p>
+        <p className="text-lg text-black"><span className="font-semibold">Name:</span> {user.name}</p>
+        <p className="text-lg text-black"><span className="font-semibold">Email:</span> {user.email}</p>
+        <p className="text-lg text-black"><span className="font-semibold">Role:</span> {user.role}</p>
       </div>
 
       {/* Bookings Table */}
@@ -78,6 +94,14 @@ const MySpace = () => {
                 <td className="py-2">{booking.date}</td>
                 <td className="py-2">{booking.start}</td>
                 <td className="py-2">{booking.end}</td>
+                <td className="py-2">
+                  <button
+                    onClick={() => deleteBooking(booking.id)}
+                    className="text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition"
+                  >
+                    Cancel
+                  </button>
+                </td>
               </tr>
             ))}
             {bookings.length === 0 && (

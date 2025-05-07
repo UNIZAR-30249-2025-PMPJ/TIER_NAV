@@ -13,7 +13,7 @@ import BookingSuccess from '../Pages/BookingSuccess';
 import { UserProvider } from '../contexts/UserProvider';
 import { SearchRoomsProvider } from '../contexts/SearchRoomsProvider';
 import { SelectedRoomsProvider } from '../contexts/SelectedRoomsProvider';
-import { Notifications } from '../Pages/Notifications';
+import Notifications from '../Pages/Notifications';
 
 
 
