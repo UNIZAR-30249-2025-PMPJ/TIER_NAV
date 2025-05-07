@@ -61,7 +61,7 @@ const SearchRooms = () => {
   const handleSearch = async () => {
     try {
       const query = buildQueryParams();
-      const response = await fetch(`${Url}/spaces?${query}`,  {
+      const response = await fetch(`${Url}/spaces?${query}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

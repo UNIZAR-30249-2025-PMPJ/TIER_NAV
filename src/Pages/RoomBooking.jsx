@@ -8,10 +8,11 @@ import Calendar  from '../Components/Calendar';
 
 const RoomInfo = ({ room }) => (
     <div className="flex flex-col gap-2 text-lg w-full bg-white border border-secondary rounded-xl p-6 shadow-xl">
-        {['name', 'category', 'capacity', 'floor'].map((key) => (
+        {['name', 'category', 'capacity', 'floor', 'assignedTo'].map((key) => (
             <div key={key}>
                 <span className="font-semibold text-secondary">{key.charAt(0).toUpperCase() + key.slice(1)}</span>{' '}
                 <span className="text-black font-medium">{room[key]}</span>
+                
             </div>
         ))}
     </div>
@@ -86,8 +87,7 @@ const RoomBooking = () => {
     useEffect(() => {
         const fetchReservations = async () => {
             if (!roomId) return;
-            
-                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`,  {
+                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`, {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -133,9 +133,9 @@ const RoomBooking = () => {
 
         e.preventDefault();
 
-        const { start, duration, date, people, use } = form;
-        if (!start || !duration || !date || !people || !use) {
-            alert('Please fill in Start, Duration, Date, Use and Number of people.');
+        const { start, duration, date, people, use, comments } = form;
+        if (!start || !duration || !date || !people || !use || !comments.trim()) {
+            alert('Please fill in all fields.');
             return;
         }
         //date is in YYYY-MM-DD format and we need to convert it to DD/MM/YYYY

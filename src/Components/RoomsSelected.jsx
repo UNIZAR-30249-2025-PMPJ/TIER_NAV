@@ -41,6 +41,7 @@ const RoomsSelected = () => {
         const response = await fetch(`${Url}/reservations`, {
           method: 'POST',
           headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
