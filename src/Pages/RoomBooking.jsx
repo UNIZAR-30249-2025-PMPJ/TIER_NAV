@@ -87,7 +87,6 @@ const RoomBooking = () => {
     useEffect(() => {
         const fetchReservations = async () => {
             if (!roomId) return;
-            
                 const response = await fetch(`${Url}/reservations?spaceId=${roomId}`, {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem('token')}`,

@@ -8,7 +8,11 @@ import { UrlPyGeoApi } from '../utils/url';
 // Fetch GeoJSON data from PyGeoAPI
 const fetchGeoJsonCollection = async (collectionName, setter) => {
   try {
-    const response = await fetch(`${UrlPyGeoApi}/collections/${collectionName}/items?limit=1000`);
+    const response = await fetch(`${UrlPyGeoApi}/collections/${collectionName}/items?limit=1000`,  {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     const data = await response.json();
     if (data.type === "FeatureCollection") {
       setter(data);
