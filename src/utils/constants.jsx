@@ -8,6 +8,7 @@ const routes = {
     bookingsuccess : '/bookingsuccess',
     roomlist : '/roomlist',
     notifications: '/notifications',
+    managebookings: '/managebookings',
 };
 
 export {routes};

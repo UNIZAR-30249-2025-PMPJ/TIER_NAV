@@ -1,10 +1,13 @@
 
 import { Url } from '../utils/url';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from '../contexts/UserContext';
 
 const LoginPage = () => {
     //Use the navigate hook to redirect the user to another page
     const navigate = useNavigate();
+    const { login } = useContext(UserContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,7 +29,7 @@ const LoginPage = () => {
             : await request.text();
         //Check the response
         if (response) {
-            localStorage.setItem("token", response);
+            login(response);
             //Redirect the user to the Home page
             navigate("/home");
         }
