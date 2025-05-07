@@ -54,13 +54,18 @@ const SearchRooms = () => {
       maxOccupants: room.maxOccupants ?? 'N/A',
       floor: room.floor ?? 'N/A',
       capacity: Math.floor(((room.maxOccupants || 0) * (room.maxUsage || 0)) / 100),
+      assignedTo: typeof room.assignedTo === 'object' ? room.assignedTo.id : room.assignedTo || 'N/A',
     }));
 
   // Handle the search action
   const handleSearch = async () => {
     try {
       const query = buildQueryParams();
-      const response = await fetch(`${Url}/spaces?${query}`);
+      const response = await fetch(`${Url}/spaces?${query}`,  {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch rooms: ${response.statusText}`);

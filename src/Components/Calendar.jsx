@@ -12,7 +12,11 @@ const Calendar = ({ bookings, setTime }) => {
   useEffect(() => {
     const fetchHolidays = async () => {
       try {
-        const response = await fetch(`${Url}/buildings`);
+        const response = await fetch(`${Url}/buildings`,  {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         if (response.ok) {
           const json = await response.json();
           const holidays = json[0]?.holidays || [];

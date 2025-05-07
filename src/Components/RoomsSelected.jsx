@@ -29,11 +29,20 @@ const RoomsSelected = () => {
         } else {
           startTime = `${room.date}T${room.start.padStart(5, '0')}:00`;
         }
-
+        console.log({
+          usage: room.use,
+          startTime,
+          duration: parseInt(room.duration),
+          maxAttendees: parseInt(room.people),
+          personId,
+          spaceId: room.id,
+          description: room.comments,
+        })
         const response = await fetch(`${Url}/reservations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
           body: JSON.stringify({
             usage: room.use,
@@ -42,6 +51,7 @@ const RoomsSelected = () => {
             maxAttendees: parseInt(room.people),
             personId,
             spaceId: room.id,
+            description: room.comments,
           }),
         });
 

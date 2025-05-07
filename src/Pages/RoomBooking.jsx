@@ -87,7 +87,11 @@ const RoomBooking = () => {
         const fetchReservations = async () => {
             if (!roomId) return;
             
-                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`);
+                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`,  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                  });
                 if (response.ok) {
                     
                     const json = await response.json();
