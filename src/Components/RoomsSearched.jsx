@@ -41,6 +41,7 @@ const RoomsSearched = () => {
                 <p><strong className="text-secondary">Category:</strong> {room.category}</p>
                 <p><strong className="text-secondary">Floor:</strong> {room.floor}</p>
                 <p><strong className="text-secondary">Capacity:</strong> {room.capacity}</p>
+                <p><strong className="text-secondary">Assigned to:</strong> {room.assignedTo}</p>
               </li>
             ))}
           </ul>

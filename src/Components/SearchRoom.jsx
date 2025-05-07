@@ -54,6 +54,7 @@ const SearchRooms = () => {
       maxOccupants: room.maxOccupants ?? 'N/A',
       floor: room.floor ?? 'N/A',
       capacity: Math.floor(((room.maxOccupants || 0) * (room.maxUsage || 0)) / 100),
+      assignedTo: typeof room.assignedTo === 'object' ? room.assignedTo.id : room.assignedTo || 'N/A',
     }));
 
   // Handle the search action
