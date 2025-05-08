@@ -19,7 +19,6 @@ const Notifications = () => {
 
         const json = await response.json();
         setNotifications(json);
-        console.log('Notifications:', json);
       } catch (err) {
         console.error('Error fetching notifications:', err);
       }
