@@ -87,39 +87,43 @@ const RoomBooking = () => {
     useEffect(() => {
         const fetchReservations = async () => {
             if (!roomId) return;
-                const response = await fetch(`${Url}/reservations?spaceId=${roomId}`, {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                  });
-                if (response.ok) {
-                    
-                    const json = await response.json();
-                    const result = {};
-                    json.forEach((res) => {
-                        const start = new Date(res.startTime);
-                        const end = new Date(start.getTime() + res.duration * 60000);
-                        const dateKey = start.toLocaleDateString('es-ES');
-
-                        if (!result[dateKey]) result[dateKey] = [];
-
-                        const slots = [];
-                        const current = new Date(start);
-
-                        while (current < end) {
-                            const hour = current.getHours().toString().padStart(2, '0');
-                            const minutes = current.getMinutes().toString().padStart(2, '0');
-                            slots.push(`${hour}:${minutes}`);
-                            current.setMinutes(current.getMinutes() + 30);
-                        }
-
-                        result[dateKey].push(...slots);
-                    });
-
-                    setBookedTimes(result);
+          
+            const response = await fetch(`${Url}/reservations?spaceId=${roomId}`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            });
+          
+            if (response.ok) {
+              const json = await response.json();
+              const result = {};
+          
+              json.forEach((res) => {
+                console.log(res);
+                const start = new Date(res.startTime); // UTC from DB
+                const end = new Date(start.getTime() + res.duration * 60000);
+          
+                const dateKey = `${start.getUTCDate()}/${start.getUTCMonth() + 1}/${start.getUTCFullYear()}`; // no local shift
+          
+                if (!result[dateKey]) result[dateKey] = [];
+          
+                const slots = [];
+                const current = new Date(start.getTime());
+          
+                while (current < end) {
+                  const hour = current.getUTCHours().toString().padStart(2, "0");
+                  const minutes = current.getUTCMinutes().toString().padStart(2, "0");
+                  slots.push(`${hour}:${minutes}`);
+                  current.setUTCMinutes(current.getUTCMinutes() + 30);
                 }
-            
-        };
+          
+                result[dateKey].push(...slots);
+              });
+          
+              setBookedTimes(result);
+            }
+          };
+          
 
         fetchReservations();
     }, [roomId]);
