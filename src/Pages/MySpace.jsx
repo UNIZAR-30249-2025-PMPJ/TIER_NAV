@@ -32,6 +32,7 @@ const MySpace = () => {
           date: start.toLocaleDateString('es-ES'),
           start: start.toTimeString().slice(0, 5),
           end: end.toTimeString().slice(0, 5),
+          state: res.state,
         };
       });
 
@@ -66,7 +67,6 @@ const MySpace = () => {
   if (!user) {
     return <div className="p-10 text-center text-red-500">User not connected.</div>;
   }
-
   return (
     <div className="p-10">
       {/* User Info */}
@@ -88,6 +88,7 @@ const MySpace = () => {
               <th className="pb-2">Date</th>
               <th className="pb-2">Start</th>
               <th className="pb-2">End</th>
+              <th className="pb-2">State</th>
             </tr>
           </thead>
           <tbody>
@@ -98,6 +99,7 @@ const MySpace = () => {
                 <td className="py-2">{booking.date}</td>
                 <td className="py-2">{booking.start}</td>
                 <td className="py-2">{booking.end}</td>
+                <td className="py-2">{booking.state}</td>
                 <td className="py-2">
                   <button
                     onClick={() => deleteBooking(booking.id)}
