@@ -9,12 +9,14 @@ const ITEMS_PER_PAGE = 5;
 const RoomsSearched = () => {
   const  { availableRooms }  = useContext(SearchRoomsContext);
   const navigate = useNavigate();
-
+  const sorted = availableRooms.sort((a, b) => a.id.localeCompare(b.id)
+  );
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(availableRooms.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentRooms = availableRooms.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentRooms = sorted.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  
 
   const handleViewDetails = (room) => {
     navigate(`/roomdetails/${room.id}`);
@@ -37,6 +39,7 @@ const RoomsSearched = () => {
                 className="shadow-md p-3 rounded bg-third cursor-pointer hover:shadow-lg transition"
                 onClick={() => handleViewDetails(room)}
               >
+                <p><strong className="text-secondary">Id:</strong> {room.id}</p>
                 <p><strong className="text-secondary">Name:</strong> {room.name}</p>
                 <p><strong className="text-secondary">Category:</strong> {room.category}</p>
                 <p><strong className="text-secondary">Floor:</strong> {room.floor}</p>
