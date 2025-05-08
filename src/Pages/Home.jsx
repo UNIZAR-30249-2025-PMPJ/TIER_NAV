@@ -80,6 +80,7 @@ const GeoJSONLayer = ({ geoJson }) => {
         layer.on('mouseover', () => {
           const { name, reservabilityCategory } = feature.properties;
           const popupContent = `
+            <strong>ID:</strong> ${feature.id} <br/>
             <strong>Name:</strong> ${name} <br/>
             <strong>Category:</strong> ${reservabilityCategory} <br/>
             <strong>Assigned:</strong> ${assignedTo}<br/>
