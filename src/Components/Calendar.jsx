@@ -144,11 +144,7 @@ const Calendar = ({ bookings, setTime, room }) => {
                         const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
                         setTime({ date: newDate, time: hour });
                         //añadir la room y navegar
-                        setSelectedRoom({
-                          ...selectedRoom,
-                          date: newDate,
-                          start: hour,
-                        });
+                        setSelectedRoom({...selectedRoom});
                         addRoom(selectedRoom);
                         clearAvailableRooms();
                         navigate(routes.searchrooms);
