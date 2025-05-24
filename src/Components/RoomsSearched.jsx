@@ -26,13 +26,13 @@ const RoomsSearched = () => {
   const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   return (
-    <div className="bg-white p-4 rounded shadow w-full">
+    <div className="bg-white p-4 rounded shadow w-full h-full">
       <h3 className="text-2xl text-secondary font-semibold mb-4">Available Rooms</h3>
       {availableRooms.length === 0 ? (
         <p className="text-secondary text-center">No rooms found.</p>
       ) : (
         <>
-          <ul className="space-y-2">
+          <ul className="space-y-2 h-[88%] ">
             {currentRooms.map((room) => (
               <li
                 key={room.id}
@@ -50,7 +50,7 @@ const RoomsSearched = () => {
           </ul>
 
           {/* Pagination Controls */}
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex justify-between align-bottom items-center mt-4">
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
