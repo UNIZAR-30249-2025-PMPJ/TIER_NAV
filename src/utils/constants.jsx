@@ -3,7 +3,7 @@ const routes = {
     login: '/login',
     searchrooms: '/searchrooms',
     home : '/home',
-    myspace : '/myspace',
+    bookings : '/bookings',
     roomdetails : '/roomdetails/:id',
     bookingsuccess : '/bookingsuccess',
     roomlist : '/roomlist',

@@ -7,7 +7,7 @@ import ByronHub from '../Pages/ByronHub';
 import LoginPage from '../Pages/LogIn';
 import Search from '../Pages/Search';
 import Layout from '../layout/Layout';
-import MySpace from '../Pages/MySpace';
+import Bookings from '../Pages/Bookings';
 import RoomBooking from '../Pages/RoomBooking';
 import BookingSuccess from '../Pages/BookingSuccess';
 import { UserProvider } from '../contexts/UserProvider';
@@ -15,6 +15,7 @@ import { SearchRoomsProvider } from '../contexts/SearchRoomsProvider';
 import { SelectedRoomsProvider } from '../contexts/SelectedRoomsProvider';
 import Notifications from '../Pages/Notifications';
 import ManageBookings from '../Pages/ManageBookings';
+
 
 
 
@@ -52,7 +53,7 @@ const RouterPrincipal = () => {
     
               <Route path="/" element={<Layout />} >
                 <Route path={routes.home} element={<Home />} />
-                <Route path={routes.myspace} element={<MySpace />} />
+                <Route path={routes.bookings} element={<Bookings />} />
                 <Route path={routes.searchrooms} element={<Search />} />
                 <Route path={routes.roomdetails} element={<RoomBooking />} />
                 <Route path={routes.bookingsuccess} element={<BookingSuccess />} />

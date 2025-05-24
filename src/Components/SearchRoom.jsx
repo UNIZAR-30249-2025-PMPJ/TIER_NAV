@@ -85,9 +85,9 @@ const SearchRooms = () => {
   };
 
   return (
-    <div className="w-full h-full bg-white p-6 rounded-xl shadow-md">
+    <div className="w-full h-full bg-white p-6 rounded-xl shadow-md flex flex-col">
       <h2 className="text-2xl font-semibold text-secondary mb-6 text-center">Search for a Room</h2>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 flex-grow h-full ">
         <InputField
           label="Identifier"
           name="identifier"
