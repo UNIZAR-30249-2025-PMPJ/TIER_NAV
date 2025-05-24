@@ -19,6 +19,7 @@ const RoomsSelected = () => {
 
   const handleBook = async () => {
     try {
+      //TODO: Ahora solo se hace una unica reserva en al que se incluyen todas las salas seleccionadas
       for (const room of selectedRooms) {
         let startTime;
         if (room.date.includes('/')) {

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import { Url } from '../utils/url';
 
-const MySpace = () => {
+const Bookings = () => {
   const { user } = useContext(UserContext);
   const [bookings, setBookings] = useState([]);
 
@@ -124,4 +124,4 @@ const MySpace = () => {
   );
 };
 
-export default MySpace;
+export default Bookings;
