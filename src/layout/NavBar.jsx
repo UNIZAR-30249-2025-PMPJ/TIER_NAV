@@ -54,8 +54,8 @@ const Layout = () => {
             {user?.role === 'Manager' && (
               <>
                 <span className="text-blue-400">|</span>
-                <button onClick={() => navigate(routes.managebookings)} className={navLinkClass(routes.managebookings)}>
-                  Manage Bookings
+                <button onClick={() => navigate(routes.manage)} className={navLinkClass(routes.manage)}>
+                  Manage
                 </button>
               </>
             )}
