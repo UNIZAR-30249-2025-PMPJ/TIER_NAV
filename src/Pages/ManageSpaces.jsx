@@ -7,7 +7,7 @@ const DEPARTMENTS = [
   'Electronic Engineering and Communications'
 ];
 
-const EINA = "EINA - ADA BYRON";
+const EINA = 'EINA - ADA BYRON';
 
 const ManageSpace = () => {
   const { user } = useContext(UserContext);
@@ -76,20 +76,13 @@ const ManageSpace = () => {
     }
 
     const updatePayload = {
-        reservable: roomData.reservable,
-        reservabilityCategory: { name: roomData.category },
-        openTime: new Date(`1970-01-01T${roomData.openTime}:00.000Z`),
-        closeTime: new Date(`1970-01-01T${roomData.closeTime}:00.000Z`),
-        maxUsage: roomData.maxUsage,
+      reservable: roomData.reservable,
+      reservabilityCategory: { name: roomData.category },
+      openTime: new Date(`1970-01-01T${roomData.openTime}:00.000Z`),
+      closeTime: new Date(`1970-01-01T${roomData.closeTime}:00.000Z`),
+      maxUsage: roomData.maxUsage,
+      assignedTo: roomData.assignedTo
     };
-
-    if (roomData.assignedTo === EINA) {
-      updatePayload.assignedTo = EINA;
-    } else if (DEPARTMENTS.includes(roomData.assignedTo)) {
-      updatePayload.assignedTo = roomData.assignedTo;
-    } else if (roomData.category === 'Office') {
-      updatePayload.assignedTo = roomData.assignedTo;
-    }
 
     try {
       const res = await fetch(`${Url}/spaces/${roomId}`, {
@@ -102,7 +95,6 @@ const ManageSpace = () => {
       });
 
       if (!res.ok) throw new Error('Failed to update space');
-
       alert('Room updated successfully');
     } catch (err) {
       console.error('Error updating space:', err);
@@ -112,9 +104,18 @@ const ManageSpace = () => {
 
   const handleChange = (roomId, field, value) => {
     setAvailableRooms(prev =>
-      prev.map(room =>
-        room.id === roomId ? { ...room, [field]: value } : room
-      )
+      prev.map(room => {
+        if (room.id === roomId) {
+          const updatedRoom = { ...room, [field]: value };
+
+          if (field === 'category' && (value === 'Common Room' || value === 'Classroom')) {
+            updatedRoom.assignedTo = EINA;
+          }
+
+          return updatedRoom;
+        }
+        return room;
+      })
     );
   };
 
@@ -185,7 +186,7 @@ const ManageSpace = () => {
                 <span className="text-secondary">Open Time:</span>
                 <input
                   type="time"
-                  value={room.openTime || 'N/A'}
+                  value={room.openTime}
                   onChange={(e) => handleChange(room.id, 'openTime', e.target.value)}
                   className="w-full border px-2 py-1 rounded"
                 />
@@ -194,13 +195,23 @@ const ManageSpace = () => {
                 <span className="text-secondary">Close Time:</span>
                 <input
                   type="time"
-                  value={room.closeTime || 'N/A'}
+                  value={room.closeTime}
                   onChange={(e) => handleChange(room.id, 'closeTime', e.target.value)}
                   className="w-full border px-2 py-1 rounded"
                 />
               </label>
             </div>
-            {getAssignableOptions(room.category).length > 0 && (
+            {room.category === 'Common Room' || room.category === 'Classroom' ? (
+              <label className="block">
+                <span className="text-secondary">Assigned To:</span>
+                <input
+                  type="text"
+                  value={EINA}
+                  disabled
+                  className="w-full border px-2 py-1 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
+                />
+              </label>
+            ) : (
               <div className="space-y-2">
                 <label className="block">
                   <span className="text-secondary">Assigned To:</span>
