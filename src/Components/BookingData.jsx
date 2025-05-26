@@ -7,26 +7,74 @@ import { useNavigate } from "react-router-dom";
 import { Url } from "../utils/url";
 
 
+const BookingForm = ({ form, handleChange, handleSubmit }) => (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-grow h-full justify-between ">
+        {[
+            { label: 'Use', name: 'use', type: 'text' },
+            { label: 'Number of people', name: 'people', type: 'number' },
+            { label: 'Start', name: 'start', type: 'time', placeholder: 'ex: 08:30' },
+            { label: 'Duration (minutes)', name: 'duration', type: 'text' },
+            { label: 'Date', name: 'date', type: 'date', placeholder: 'ex: 01/05/2025' },
+        ].map(({ label, name, type, placeholder }) => (
+            <div className="flex flex-col gap-4" key={name}>
+                <label className="font-medium">{label}</label>
+                <input
+                    type={type}
+                    name={name}
+                    value={form[name]}
+                    onChange={handleChange}
+                    placeholder={placeholder}
+                    readOnly={name === 'date' || name === 'start'}
+                    className="border border-gray-300 rounded px-3 py-2 text-black"
+                />
+            </div>
+        ))}
+
+        <div className="flex flex-col gap-2">
+            <label className="font-medium">Comments</label>
+            <textarea
+                name="comments"
+                value={form.comments}
+                onChange={handleChange}
+                rows={3}
+                className="border border-gray-300 rounded px-3 py-2 text-black"
+            />
+        </div>
+
+        <div className="flex justify-center mt-6">
+            <button
+                type="submit"
+                className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary transition duration-300 w-full"
+            >
+                Book
+            </button>
+        </div>
+    </form>
+);
+
 
 export const BookingData = () => {
-
-    const {selectedRooms, clearRooms, initialTime} = useContext(SelectedRoomsContext);
-    const {clearAvailableRooms} = useContext(SearchRoomsContext);
+    const { selectedRooms, clearRooms, initialTime } = useContext(SelectedRoomsContext);
+    const { clearAvailableRooms } = useContext(SearchRoomsContext);
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
     const personId = user.id;
+
     const [form, setForm] = useState({
-            use: '',
-            people: '',
-            duration: '',
-            comments: '',
-            start: initialTime.time || '',
-            date: initialTime.date || '',
+        use: '',
+        people: '',
+        duration: '',
+        comments: '',
+        start: initialTime.time || '',
+        date: initialTime.date || '',
     });
-    
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    };
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
         const { start, duration, date, people, use, comments } = form;
@@ -34,7 +82,7 @@ export const BookingData = () => {
             alert('Please fill in all fields.');
             return;
         }
-        //date is in YYYY-MM-DD format and we need to convert it to DD/MM/YYYY
+
         const [year, month, day] = date.split('-');
         const formattedDate = `${day}/${month}/${year}`;
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
@@ -64,108 +112,51 @@ export const BookingData = () => {
         } else {
             startTime = `${date}T${start.padStart(5, '0')}:00`;
         }
+
         const data = {
             spaceIds: selectedRooms.map(room => room.id),
             usage: use,
-            startTime: startTime,
+            startTime,
             duration: parseInt(duration),
             maxAttendees: numberOfPeople,
-            personId: personId,
+            personId,
             description: comments,
-        }
+        };
 
-        try { 
+        try {
             const response = await fetch(`${Url}/reservations`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
-
+            console.log('Response:', response);
             if (!response.ok) {
                 console.error('Failed to reserve rooms:', response.statusText);
-                alert(
-                    `Failed to reserve room(s): ${selectedRooms.map(room => room.name).join(', ')}. Please try again later.`
-                );
+                alert(`Failed to reserve room(s): ${selectedRooms.map(room => room.name).join(', ')}. Please try again later.`);
                 throw new Error(`Reservation failed for room(s): ${selectedRooms.map(room => room.name).join(', ')}`);
             }
-        
+
             clearRooms();
             clearAvailableRooms();
-        
             navigate(routes.bookingsuccess);
         } catch (error) {
-        
-            
             console.error('Booking error:', error);
-            
         }
     };
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
-    };
 
-  const BookingForm = ({ form, handleSubmit }) => (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-grow h-full justify-between ">
-        {[
-            { label: 'Use', name: 'use', type: 'text' },
-            { label: 'Number of people', name: 'people', type: 'number' },
-            { label: 'Start', name: 'start', type: 'time', placeholder: 'ex: 08:30' },
-            { label: 'Duration (minutes)', name: 'duration', type: 'text' },
-            { label: 'Date', name: 'date', type: 'date', placeholder: 'ex: 01/05/2025' },
-        ].map(({ label, name, type, placeholder }) => (
-            <div className="flex flex-col gap-4 " key={name}>
-                <label className="font-medium">{label}</label>
-                <input
-                    type={type}
-                    name={name}
-                    value={form[name]}
-                    onChange={handleChange}
-                    placeholder={placeholder}
-                    readOnly={name === 'date' || name === 'start'}
-                    className="border border-gray-300 rounded px-3 py-2 text-black"
+    return (
+        <div className="w-full h-full bg-white p-6 rounded-xl shadow-md flex flex-col ">
+            <h2 className="text-2xl font-semibold text-secondary mb-6 text-center">Booking information</h2>
+            <div className="flex flex-col gap-4 flex-grow h-full justify-between">
+                <BookingForm
+                    form={form}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
                 />
             </div>
-        ))}
-        
-
-        <div className="flex flex-col gap-2">
-            <label className="font-medium">Comments</label>
-            <textarea
-                name="comments"
-                value={form.comments}
-                onChange={handleChange}
-                rows={3}
-                className="border border-gray-300 rounded px-3 py-2 text-black"
-            />
         </div>
-        <div className="flex justify-center mt-6">
-            <button
-                onClick={handleSubmit}
-                className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary transition duration-300 w-full"
-            >
-            Book
-            </button>
-        </div>
-    </form>
-);
-
-
-
-return (
-   <div className="w-full h-full bg-white p-6 rounded-xl shadow-md flex flex-col ">
-        <h2 className="text-2xl font-semibold text-secondary mb-6 text-center">Booking information</h2>
-        <div className="flex flex-col gap-4 flex-grow h-full justify-between">
-            <BookingForm
-                form={form}
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-            />
-        </div>
-        
-    </div>
-)
-}
+    );
+};

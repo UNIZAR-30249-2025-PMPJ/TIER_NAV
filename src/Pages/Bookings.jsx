@@ -22,6 +22,7 @@ const Bookings = () => {
       const json = await response.json();
 
       const formatted = json.map(res => {
+        console.log(res, 'res', new Date(res.startTime))
         const start = new Date(res.startTime);
         const end = new Date(start.getTime() + res.duration * 60000);
 

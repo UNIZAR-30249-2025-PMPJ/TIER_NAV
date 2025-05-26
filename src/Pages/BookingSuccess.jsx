@@ -3,6 +3,7 @@ import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
 
 const BookingSuccess = () => {
     const {selectedRooms, clearRooms}= useContext(SelectedRoomsContext);
+    console.log(selectedRooms);
     const [books, setBooks] = useState([]);
 
     //Set the books to the selected rooms and clear the selected rooms
@@ -22,7 +23,7 @@ const BookingSuccess = () => {
         const endDate = new Date(startDate.getTime() + parseInt(duration, 10) * 60000);
         return endDate.toTimeString().slice(0, 5);
     };
-    
+
     return (
         <div className="p-10 flex flex-col items-center gap-10 text-secondary">
             <h2 className="text-2xl font-semibold text-center">
