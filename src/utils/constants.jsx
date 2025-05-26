@@ -9,6 +9,9 @@ const routes = {
     roomlist : '/roomlist',
     notifications: '/notifications',
     managebookings: '/managebookings',
+    managespaces: '/managespaces',
+    managepeople: '/managepeople',
+    manage: '/manage',
 };
 
 export {routes};
