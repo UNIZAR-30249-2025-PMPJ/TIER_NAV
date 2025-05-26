@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { routes } from '../utils/constants';
 import { UserContext } from '../contexts/UserContext';
 import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
@@ -69,6 +69,15 @@ export const BookingData = () => {
         date: initialTime.date || '',
     });
 
+    useEffect(() => {
+        setForm((prev) => ({
+            ...prev,
+            start: initialTime.time || '',
+            date: initialTime.date || '',
+        }));
+    }, [initialTime])
+    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
@@ -124,7 +133,9 @@ export const BookingData = () => {
         };
 
         try {
-            const response = await fetch(`${Url}/reservations`, {
+
+
+           const response = await fetch(`${Url}/reservations`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -132,10 +143,13 @@ export const BookingData = () => {
                 },
                 body: JSON.stringify(data),
             });
-            console.log('Response:', response);
+
+            const responseData = await response.text(); 
+
+
             if (!response.ok) {
-                console.error('Failed to reserve rooms:', response.statusText);
-                alert(`Failed to reserve room(s): ${selectedRooms.map(room => room.name).join(', ')}. Please try again later.`);
+                console.error('Failed to reserve rooms:', responseData);
+                alert(`Failed to reserve room(s): ${selectedRooms.map(room => room.name).join(', ')}. ${responseData}. Please try again later.`);
                 throw new Error(`Reservation failed for room(s): ${selectedRooms.map(room => room.name).join(', ')}`);
             }
 
