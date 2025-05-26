@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { UserContext } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../utils/constants';
 
 const ManageOverview = () => {
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
+  if (!user || user.role !== 'Manager') {
+    return <div className="text-center text-red-500 p-6">Access denied. Manager only.</div>;
+  }
   return (
     <div className="p-10 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold text-secondary mb-6">Management Panel</h1>
