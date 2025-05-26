@@ -140,6 +140,15 @@ export const BookingData = () => {
             }
 
             clearRooms();
+            localStorage.setItem('bookingData', JSON.stringify({
+                rooms: selectedRooms,
+                startTime,
+                duration: parseInt(duration),
+                date: formattedDate,
+                people: numberOfPeople,
+                use,
+                comments,
+            }));
             clearAvailableRooms();
             navigate(routes.bookingsuccess);
         } catch (error) {

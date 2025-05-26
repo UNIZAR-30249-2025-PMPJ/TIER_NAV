@@ -1,20 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { SelectedRoomsContext } from '../contexts/SelectedRoomsContext';
+
 
 const BookingSuccess = () => {
-    const {selectedRooms, clearRooms}= useContext(SelectedRoomsContext);
-    console.log(selectedRooms);
-    const [books, setBooks] = useState([]);
-
-    //Set the books to the selected rooms and clear the selected rooms
    
+    const data = localStorage.getItem('bookingData');
+    const bookingData = data ? JSON.parse(data) : null;
 
-    // Call the handleBooking function when the component mounts
     
-    useEffect(() => {
-        setBooks(selectedRooms);
-        clearRooms();
-    }, []);
 
     const getEndTime = (start, duration) => {
         const [hours, minutes] = start.split(':').map(Number);
@@ -31,30 +22,45 @@ const BookingSuccess = () => {
             </h2>
 
             <div className="bg-gray-100 rounded-xl p-6 shadow-md w-full max-w-3xl">
-                <table className="w-full text-left">
-                    <thead>
-                        <tr className="border-b border-gray-300">
-                            <th className="pb-2">Name</th>
-                            <th className="pb-2">Category</th>
-                            <th className="pb-2">People</th>
-                            <th className="pb-2">Date</th>
-                            <th className="pb-2">Start</th>
-                            <th className="pb-2">End</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {books.map((room, index) => (
-                            <tr key={index} className="border-b border-gray-200">
-                                <td className="py-2">{room.name}</td>
-                                <td className="py-2">{room.category}</td>
-                                <td className="py-2">{room.people}</td>
-                                <td className="py-2">{room.date}</td>
-                                <td className="py-2">{room.start}</td>
-                                <td className="py-2">{getEndTime(room.start, room.duration)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <h3 className="text-xl font-semibold mb-4">Booking Details</h3>
+                {bookingData ? (
+                    <div className="space-y-2">
+                        <div>
+                            <span className="font-semibold">Date:</span> {bookingData.date}
+                        </div>
+                        <div>
+                            <span className="font-semibold">Start Time:</span>{" "}
+                            {bookingData.startTime.split('T')[1].slice(0, 5)}
+                        </div>
+                        <div>
+                            <span className="font-semibold">End time:</span> {getEndTime(bookingData.startTime.split('T')[1], bookingData.duration)}
+                        </div>
+                        <div>
+                            <span className="font-semibold">People:</span> {bookingData.people}
+                        </div>
+                        <div>
+                            <span className="font-semibold">Use:</span> {bookingData.use}
+                        </div>
+                        <div>
+                            <span className="font-semibold">Rooms:</span>{" "}
+                            {bookingData.rooms && bookingData.rooms.length > 0
+                                ? bookingData.rooms.map((room, idx) => (
+                                        <span key={room.id || idx}>
+                                            {room.id || `Room ${idx + 1}`}
+                                            {idx < bookingData.rooms.length - 1 ? ', ' : ''}
+                                        </span>
+                                    ))
+                                : 'N/A'}
+                        </div>
+                        {bookingData.comments && (
+                            <div>
+                                <span className="font-semibold">Comments:</span> {bookingData.comments}
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div>No booking data found.</div>
+                )}
             </div>
         </div>
     );
