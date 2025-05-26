@@ -10,7 +10,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { clearAvailableRooms } = useContext(SearchRoomsContext);
-  const { logout, user } = useContext(UserContext); // ← On récupère le user
+  const { logout, user } = useContext(UserContext);
 
   const handleSignout = () => {
     logout();
@@ -35,10 +35,8 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen flex flex-col ">
-      {/* Header */}
       <header className="bg-gray-100 shadow-sm py-4 px-6 relative">
         <div className="max-w-7xl mx-auto flex justify-center items-center relative">
-          {/* Centered Navigation */}
           <nav className="flex gap-6 text-lg absolute left-1/2 -translate-x-1/2">
             <button onClick={handleNavigationSearch} className={navLinkClass(routes.searchrooms)}>
               Search
@@ -51,7 +49,7 @@ const Layout = () => {
             <button onClick={() => navigate(routes.myspace)} className={navLinkClass(routes.myspace)}>
               My Space
             </button>
-            {user?.role === 'Manager' && (
+            {(user?.role === 'Manager' || user?.role === 'Manager & Teacher') && (
               <>
                 <span className="text-blue-400">|</span>
                 <button onClick={() => navigate(routes.manage)} className={navLinkClass(routes.manage)}>
@@ -60,8 +58,6 @@ const Layout = () => {
               </>
             )}
           </nav>
-
-          {/* Right Icons */}
           <div className="absolute right-0 flex items-center gap-4">
             <button
               className="text-gray-500 hover:text-gray-700 cursor-pointer"
@@ -76,8 +72,6 @@ const Layout = () => {
           </div>
         </div>
       </header>
-
-      {/* Main Content */}
       <main className="flex-grow">
         <Outlet />
       </main>

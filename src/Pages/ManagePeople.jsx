@@ -89,7 +89,7 @@ const ManagePeople = () => {
     };
       
 
-    if (!user || user.role !== 'Manager') {
+    if (!user || user.role !== 'Manager' && user.role !== 'Manager & Teacher') {
         return <div className="text-center text-red-500 p-6">Access denied. Manager only.</div>;
     }
     return (

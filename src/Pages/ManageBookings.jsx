@@ -7,7 +7,7 @@ const ManageBookings = () => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    if (user?.role === 'Manager') {
+    if (user?.role === 'Manager' || user?.role === 'Manager & Teacher') {
       fetchAllBookings();
     }
   }, [user]);
@@ -89,7 +89,7 @@ const ManageBookings = () => {
     }
   };
 
-  if (!user || user.role !== 'Manager') {
+  if (!user || user.role !== 'Manager' && user.role !== 'Manager & Teacher') {
     return <div className="p-10 text-center text-red-500">Access denied. Manager only.</div>;
   }
 
