@@ -12,7 +12,7 @@ export const SelectedRoomsProvider = ({ children }) => {
     const storedRooms = localStorage.getItem("selectedRooms");
     const storedInitialTime = localStorage.getItem("initialTime");
     if (storedInitialTime) {
-      setInitialTime(storedInitialTime);
+      setInitialTime(JSON.parse(storedInitialTime));
     } 
     if (storedRooms) {
       setSelectedRooms(JSON.parse(storedRooms));

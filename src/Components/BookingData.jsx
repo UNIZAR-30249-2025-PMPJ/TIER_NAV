@@ -10,7 +10,7 @@ import { Url } from "../utils/url";
 
 export const BookingData = () => {
 
-    const {selectedRooms, clearRooms} = useContext(SelectedRoomsContext);
+    const {selectedRooms, clearRooms, initialTime} = useContext(SelectedRoomsContext);
     const {clearAvailableRooms} = useContext(SearchRoomsContext);
     const { user } = useContext(UserContext);
     const navigate = useNavigate();
@@ -20,9 +20,9 @@ export const BookingData = () => {
             people: '',
             duration: '',
             comments: '',
-            start: '',
-            date: '',
-        });
+            start: initialTime.time || '',
+            date: initialTime.date || '',
+    });
     
 
     const handleSubmit = async (e) => {
@@ -56,53 +56,59 @@ export const BookingData = () => {
             return;
         }
 
+        let startTime;
+        if (date.includes('/')) {
+            const [day, month, year] = date.split('/');
+            const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            startTime = `${isoDate}T${start.padStart(5, '0')}:00`;
+        } else {
+            startTime = `${date}T${start.padStart(5, '0')}:00`;
+        }
+        const data = {
+            spaceIds: selectedRooms.map(room => room.id),
+            usage: use,
+            startTime: startTime,
+            duration: parseInt(duration),
+            maxAttendees: numberOfPeople,
+            personId: personId,
+            description: comments,
+        }
 
+        try { 
+            const response = await fetch(`${Url}/reservations`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            });
 
-        try {
-        //TODO: Ahora solo se hace una unica reserva en al que se incluyen todas las salas seleccionadas
-            for (const room of selectedRooms) {
-                let startTime;
-                if (room.date.includes('/')) {
-                const [day, month, year] = room.date.split('/');
-                const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                const isoTime = room.start.padStart(5, '0');
-                startTime = `${isoDate}T${isoTime}:00`;
-                } else {
-                startTime = `${room.date}T${room.start.padStart(5, '0')}:00`;
-                }
-                const response = await fetch(`${Url}/reservations`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    usage: room.use,
-                    startTime,
-                    duration: parseInt(room.duration),
-                    maxAttendees: parseInt(room.people),
-                    personId,
-                    spaceId: room.id,
-                    description: room.comments,
-                }),
-                });
-
-                if (!response.ok) {
-                throw new Error(`Reservation failed for ${room.name}`);
-                }
+            if (!response.ok) {
+                console.error('Failed to reserve rooms:', response.statusText);
+                alert(
+                    `Failed to reserve room(s): ${selectedRooms.map(room => room.name).join(', ')}. Please try again later.`
+                );
+                throw new Error(`Reservation failed for room(s): ${selectedRooms.map(room => room.name).join(', ')}`);
             }
+        
             clearRooms();
-        clearAvailableRooms();
-      
-        navigate(routes.bookingsuccess);
+            clearAvailableRooms();
+        
+            navigate(routes.bookingsuccess);
         } catch (error) {
-        console.error('Booking error:', error);
-        alert('One or more bookings failed.');
+        
+            
+            console.error('Booking error:', error);
+            
         }
     };
-    
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    };
 
-  const BookingForm = ({ form, handleChange, handleSubmit }) => (
+  const BookingForm = ({ form, handleSubmit }) => (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 flex-grow h-full justify-between ">
         {[
             { label: 'Use', name: 'use', type: 'text' },
@@ -147,10 +153,7 @@ export const BookingData = () => {
     </form>
 );
 
-const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
-    };
+
 
 return (
    <div className="w-full h-full bg-white p-6 rounded-xl shadow-md flex flex-col ">

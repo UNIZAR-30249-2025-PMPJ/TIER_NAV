@@ -24,14 +24,13 @@ const RoomBooking = () => {
     const [bookedTimes, setBookedTimes] = useState({});
     const { id: roomId } = useParams();
     const room = availableRooms.find((room) => room.id === roomId);
-    console.log("Room:", room);
 
     
     useEffect(() => {
         const fetchReservations = async () => {
             if (!roomId) return;
           
-            const response = await fetch(`${Url}/reservations?spaceId=${roomId}`, {
+            const response = await fetch(`${Url}/reservations?spaceIds=${roomId}`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
@@ -42,7 +41,6 @@ const RoomBooking = () => {
               const result = {};
           
               json.forEach((res) => {
-                console.log(res);
                 const start = new Date(res.startTime); // UTC from DB
                 const end = new Date(start.getTime() + res.duration * 60000);
           

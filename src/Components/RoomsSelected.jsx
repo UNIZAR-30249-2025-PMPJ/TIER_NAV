@@ -5,7 +5,7 @@ import ItemSelectedRoom from './ItemSelectedRoom';
 
 
 const RoomsSelected = () => {
-  const {selectedRooms, removeRoom} = useContext(SelectedRoomsContext);
+  const {selectedRooms, removeRoom, initialTime} = useContext(SelectedRoomsContext);
 
 
   
@@ -19,7 +19,7 @@ const RoomsSelected = () => {
         <>
           <ul className="space-y-2">
             {selectedRooms.map((room, index) => (
-              <ItemSelectedRoom key={index} room={room} removeRoom={removeRoom} />
+              <ItemSelectedRoom key={index} room={room} initialTime={initialTime} removeRoom={removeRoom} />
             ))}
           </ul>
           
