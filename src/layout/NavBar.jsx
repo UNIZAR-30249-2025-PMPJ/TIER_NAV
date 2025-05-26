@@ -43,11 +43,11 @@ const Layout = () => {
             </button>
             <span className="text-blue-400">|</span>
             <button onClick={() => navigate(routes.home)} className={navLinkClass(routes.home)}>
-              ByronHub
+              Mapa
             </button>
             <span className="text-blue-400">|</span>
-            <button onClick={() => navigate(routes.myspace)} className={navLinkClass(routes.myspace)}>
-              My Space
+            <button onClick={() => navigate(routes.bookings)} className={navLinkClass(routes.bookings)}>
+              Bookings
             </button>
             {(user?.role === 'Manager' || user?.role === 'Manager & Teacher') && (
               <>

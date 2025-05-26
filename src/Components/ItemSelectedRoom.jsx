@@ -1,13 +1,12 @@
 import React from 'react';
 
-const ItemSelectedRoom = ({ room, removeRoom }) => {
+const ItemSelectedRoom = ({ room, removeRoom, initialTime }) => {
   return (
     <li className="shadow-md p-3 rounded bg-third flex items-center justify-between">
       <div>
         <p><strong className="text-secondary">Name:</strong> {room.name}</p>
-        <p><strong className="text-secondary">Start:</strong> {room.start}</p>
-        <p><strong className="text-secondary">Date:</strong> {room.date}</p>
-        <p><strong className="text-secondary">Duration:</strong> {room.duration}</p>
+        <p><strong className="text-secondary">Start:</strong> {initialTime.time}</p>
+        <p><strong className="text-secondary">Date:</strong> {initialTime.date}</p>
       </div>
       <button
         onClick={() => removeRoom(room)}

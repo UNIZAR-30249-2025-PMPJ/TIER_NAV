@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import { Url } from '../utils/url';
 
-const MySpace = () => {
+const Bookings = () => {
   const { user } = useContext(UserContext);
   const [bookings, setBookings] = useState([]);
 
@@ -22,6 +22,7 @@ const MySpace = () => {
       const json = await response.json();
 
       const formatted = json.map(res => {
+        console.log(res, 'res', new Date(res.startTime))
         const start = new Date(res.startTime);
         const end = new Date(start.getTime() + res.duration * 60000);
 
@@ -124,4 +125,4 @@ const MySpace = () => {
   );
 };
 
-export default MySpace;
+export default Bookings;

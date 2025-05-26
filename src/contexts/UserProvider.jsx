@@ -11,6 +11,11 @@ export const UserProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('bookingData');
+    localStorage.removeItem('availableRooms');
+    localStorage.removeItem('initialTime');
+    localStorage.removeItem('selectedRooms');
     setUser(null);
   };
 

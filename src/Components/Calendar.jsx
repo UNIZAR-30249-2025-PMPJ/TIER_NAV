@@ -1,12 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Url } from "../utils/url";
 import { UserContext } from "../contexts/UserContext";
+import { SelectedRoomsContext } from "../contexts/SelectedRoomsContext";
+import { useNavigate } from "react-router-dom";
+import { routes } from '../utils/constants';
+import { SearchRoomsContext } from "../contexts/SearchRoomsContext";
 
-const Calendar = ({ bookings, setTime }) => {
+const Calendar = ({ bookings, setTime, room }) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
   const {user} = useContext(UserContext);
+  const { addRoom,  } = useContext(SelectedRoomsContext);
+  const navigate = useNavigate();
+  const [selectedRoom, setSelectedRoom] = useState(room);
+  const {clearAvailableRooms} = useContext(SearchRoomsContext);
 
 
   useEffect(() => {
@@ -119,6 +127,31 @@ const Calendar = ({ bookings, setTime }) => {
           const dayOfWeek = day.toLocaleString("default", { weekday: "long" });
           const formattedDate = formatDate(day);
           const dayBookings = bookings[formattedDate] || [];
+          //the hours in the dayBookings are in utc format, so we need to convert them to local time
+          // the content of dayBookings is an array of strings in the format "HH:mm"
+
+        // Convert each "HH:mm" string from UTC to local time
+        const localDayBookings = dayBookings.map(utcTime => {
+          const [hours, minutes] = utcTime.split(':').map(Number);
+
+          // Create a Date object with UTC time on an arbitrary date (e.g., today)
+          const now = new Date();
+          const utcDate = new Date(Date.UTC(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            hours,
+            minutes
+          ));
+
+          // Convert to local time string (HH:mm)
+          const localHours = utcDate.getHours().toString().padStart(2, '0');
+          const localMinutes = utcDate.getMinutes().toString().padStart(2, '0');
+
+          return `${localHours}:${localMinutes}`;
+        });
+
+          
           return (
             <div key={formattedDate} className="bg-third p-4 rounded shadow-md">
               <h4 className="text-lg font-semibold text-secondary mb-2">
@@ -126,7 +159,7 @@ const Calendar = ({ bookings, setTime }) => {
               </h4>
               <ul className="space-y-1 max-h-[780px] overflow-y-auto scrollbar-hidden">
                 {hours.map((hour, index) => {
-                  const isBooked = dayBookings.includes(hour);
+                  const isBooked = localDayBookings.includes(hour);
                     return (
                     <li
                       key={index}
@@ -135,6 +168,12 @@ const Calendar = ({ bookings, setTime }) => {
                         const [day, month, year] = formattedDate.split("/");
                         const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
                         setTime({ date: newDate, time: hour });
+                        //añadir la room y navegar
+                        setSelectedRoom({...selectedRoom});
+                        addRoom(selectedRoom);
+                        clearAvailableRooms();
+                        navigate(routes.searchrooms);
+
                       }
                       }}
                       className={`p-2 rounded border text-sm cursor-pointer transition ${

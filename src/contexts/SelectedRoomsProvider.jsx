@@ -4,11 +4,16 @@ import { SelectedRoomsContext } from "./SelectedRoomsContext";
 
 export const SelectedRoomsProvider = ({ children }) => {
   const [selectedRooms, setSelectedRooms] = useState([]);
+  const [initialTime, setInitialTime] = useState({date: "", time:""}); // Default initial time
   const [isLoaded, setIsLoaded] = useState(false); // Add a flag to track loading
 
   // Load selected rooms from localStorage on initial render
   useEffect(() => {
     const storedRooms = localStorage.getItem("selectedRooms");
+    const storedInitialTime = localStorage.getItem("initialTime");
+    if (storedInitialTime) {
+      setInitialTime(JSON.parse(storedInitialTime));
+    } 
     if (storedRooms) {
       setSelectedRooms(JSON.parse(storedRooms));
     }
@@ -19,8 +24,9 @@ export const SelectedRoomsProvider = ({ children }) => {
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem("selectedRooms", JSON.stringify(selectedRooms));
+      localStorage.setItem("initialTime", JSON.stringify(initialTime));
     }
-  }, [selectedRooms, isLoaded]);
+  }, [selectedRooms, isLoaded, initialTime]);
 
   const addRoom = (room) => {
     setSelectedRooms((prev) => [...prev, room]);
@@ -47,7 +53,7 @@ export const SelectedRoomsProvider = ({ children }) => {
   };
 
   return (
-    <SelectedRoomsContext.Provider value={{ selectedRooms, addRoom, clearRooms, removeRoom }}>
+    <SelectedRoomsContext.Provider value={{ selectedRooms, addRoom, clearRooms, removeRoom, initialTime, setInitialTime }}>
       {children}
     </SelectedRoomsContext.Provider>
   );
