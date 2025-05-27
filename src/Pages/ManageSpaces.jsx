@@ -32,35 +32,40 @@ const ManageSpace = () => {
     try {
       const query = buildQueryParams();
       const response = await fetch(`${Url}/spaces?${query}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      if (!response.ok) throw new Error(`Failed to fetch rooms: ${response.statusText}`);
+      if (!response.ok) throw new Error('Failed to fetch rooms');
       const data = await response.json();
-      const formatted = data.map((room) => ({
-        id: room.id,
-        name: room.name,
-        category: room.reservabilityCategory?.name || 'N/A',
-        reservable: room.reservable,
-        maxUsage: room.maxUsage ?? 'N/A',
-        maxOccupants: room.maxOccupants ?? 'N/A',
-        floor: room.floor ?? 'N/A',
-        openTime: room.openTime ? new Date(room.openTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-        closeTime: room.closeTime ? new Date(room.closeTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-        assignedTo: typeof room.assignedTo === 'object' ? room.assignedTo.id : room.assignedTo || '',
-      }));
+      const formatted = data.map((room) => {
+        const isOffice = room.reservabilityCategory?.name === 'Office';
+        const assignedTo = typeof room.assignedTo === 'object' ? room.assignedTo.id : room.assignedTo || '';
+        const isDept = DEPARTMENTS.includes(assignedTo);
+        return {
+          id: room.id,
+          name: room.name,
+          category: room.reservabilityCategory?.name || 'N/A',
+          reservable: room.reservable,
+          maxUsage: room.maxUsage ?? 'N/A',
+          maxOccupants: room.maxOccupants ?? 'N/A',
+          floor: room.floor ?? 'N/A',
+          openTime: room.openTime ? new Date(room.openTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+          closeTime: room.closeTime ? new Date(room.closeTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+          assignedTo,
+          assignMode: isOffice ? (isDept ? 'department' : 'person') : undefined,
+          departmentValue: isOffice && isDept ? assignedTo : '',
+          personValue: isOffice && !isDept ? assignedTo : '',
+        };
+      });
       setAvailableRooms(formatted);
-    } catch (error) {
-      console.error('Error fetching rooms:', error);
-      alert('An error occurred while searching for rooms. Please try again.');
+    } catch {
+      alert('Error while searching for rooms. Please try again.');
     }
   };
 
   const getAssignableOptions = (category) => {
     switch (category) {
       case 'Office':
-        return [...DEPARTMENTS.map(d => ({ id: d, label: d }))];
+        return DEPARTMENTS.map(d => ({ id: d, label: d }));
       case 'Laboratory':
       case 'Seminar Room':
         return [...DEPARTMENTS.map(d => ({ id: d, label: d })), { id: EINA, label: EINA }];
@@ -75,13 +80,37 @@ const ManageSpace = () => {
       return;
     }
 
-    const updatePayload = {
+    let assignedTo = roomData.assignedTo;
+
+    if (roomData.category === 'Office') {
+      if (roomData.assignMode === 'department') {
+        if (!roomData.departmentValue) {
+          alert('Please select a department.');
+          return;
+        }
+        assignedTo = roomData.departmentValue;
+      } else {
+        if (!roomData.personValue) {
+          alert('Please enter a person ID.');
+          return;
+        }
+        assignedTo = roomData.personValue;
+      }
+    } else if (['Seminar Room', 'Laboratory'].includes(roomData.category)) {
+      if (!roomData.assignedTo) {
+        alert('Please select who the room is assigned to.');
+        return;
+      }
+      assignedTo = roomData.assignedTo;
+    }
+
+    const payload = {
       reservable: roomData.reservable,
       reservabilityCategory: { name: roomData.category },
-      openTime: new Date(`1970-01-01T${roomData.openTime}:00.000Z`),
-      closeTime: new Date(`1970-01-01T${roomData.closeTime}:00.000Z`),
+      openTime: new Date(`0001-01-01T${roomData.openTime}:00`),
+      closeTime: new Date(`0001-01-01T${roomData.closeTime}:00`),
       maxUsage: roomData.maxUsage,
-      assignedTo: roomData.assignedTo
+      assignedTo
     };
 
     try {
@@ -91,14 +120,13 @@ const ManageSpace = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(updatePayload),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error('Failed to update space');
+      if (!res.ok) throw new Error('Update failed');
       alert('Room updated successfully');
-    } catch (err) {
-      console.error('Error updating space:', err);
-      alert('An error occurred while updating the room.');
+    } catch {
+      alert('Error updating room');
     }
   };
 
@@ -106,20 +134,33 @@ const ManageSpace = () => {
     setAvailableRooms(prev =>
       prev.map(room => {
         if (room.id === roomId) {
-          const updatedRoom = { ...room, [field]: value };
-
-          if (field === 'category' && (value === 'Common Room' || value === 'Classroom')) {
-            updatedRoom.assignedTo = EINA;
+          const updated = { ...room, [field]: value };
+          if (field === 'category') {
+            if (value === 'Common Room' || value === 'Classroom') {
+              updated.assignedTo = EINA;
+              updated.assignMode = undefined;
+              updated.departmentValue = '';
+              updated.personValue = '';
+            } else if (value === 'Office') {
+              updated.assignedTo = '';
+              updated.assignMode = 'person';
+              updated.departmentValue = '';
+              updated.personValue = '';
+            } else {
+              updated.assignedTo = '';
+              updated.assignMode = undefined;
+              updated.departmentValue = '';
+              updated.personValue = '';
+            }
           }
-
-          return updatedRoom;
+          return updated;
         }
         return room;
       })
     );
   };
 
-  if (!user || user.role !== 'Manager' && user.role !== 'Manager & Teacher') {
+  if (!user || (user.role !== 'Manager' && user.role !== 'Manager & Teacher')) {
     return <div className="text-center text-red-500 p-6">Access denied. Manager only.</div>;
   }
 
@@ -130,24 +171,19 @@ const ManageSpace = () => {
       <div className="bg-white p-6 rounded-xl shadow-md">
         <h2 className="text-xl font-semibold text-secondary mb-4">Search for a Room</h2>
         <div className="flex flex-col gap-4">
-          <label className="block">
-            Identifier
-            <input name="identifier" value={filters.identifier} onChange={handleFilterChange} className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black" />
-          </label>
-          <label className="block">
-            Category
-            <input name="category" value={filters.category} onChange={handleFilterChange} className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black" />
-          </label>
-          <label className="block">
-            Capacity
-            <input name="maxOccupants" type="number" value={filters.maxOccupants} onChange={handleFilterChange} className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black" />
-          </label>
-          <label className="block">
-            Floor
-            <input name="floor" value={filters.floor} onChange={handleFilterChange} className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black" />
-          </label>
+          {['identifier', 'category', 'maxOccupants', 'floor'].map((field) => (
+            <label className="block" key={field}>
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+              <input
+                name={field}
+                value={filters[field]}
+                onChange={handleFilterChange}
+                className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
+              />
+            </label>
+          ))}
         </div>
-        <button onClick={handleSearch} className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary transition duration-300 w-full">
+        <button onClick={handleSearch} className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary w-full">
           Search
         </button>
       </div>
@@ -155,101 +191,119 @@ const ManageSpace = () => {
       {availableRooms.length === 0 ? (
         <p className="text-secondary">No rooms found. Use the search above.</p>
       ) : (
-        availableRooms.map((room) => (
+        availableRooms.map(room => (
           <div key={room.id} className="bg-white p-4 rounded shadow-md space-y-2">
             <p><strong>ID:</strong> {room.id}</p>
             <p><strong>Name:</strong> {room.name}</p>
+            <p className="text-sm text-gray-600"><strong>Currently assigned to:</strong> {room.assignedTo || 'None'}</p>
+
             <label className="block">
               <span className="text-secondary">Reservable:</span>
               <input
                 type="checkbox"
-                checked={room.reservable || false}
-                onChange={(e) => handleChange(room.id, 'reservable', e.target.checked)}
+                checked={room.reservable}
+                onChange={e => handleChange(room.id, 'reservable', e.target.checked)}
               />
             </label>
+
             <label className="block">
               <span className="text-secondary">Category:</span>
               <select
                 value={room.category}
-                onChange={(e) => handleChange(room.id, 'category', e.target.value)}
+                onChange={e => handleChange(room.id, 'category', e.target.value)}
                 className="border px-2 py-1 rounded w-full"
               >
-                <option value="Classroom">Classroom</option>
-                <option value="Office">Office</option>
-                <option value="Laboratory">Laboratory</option>
-                <option value="Seminar Room">Seminar Room</option>
-                <option value="Common Room">Common Room</option>
+                {['Classroom', 'Office', 'Laboratory', 'Seminar Room', 'Common Room'].map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
               </select>
             </label>
+
             <div className="flex gap-4">
-              <label className="block w-1/2">
-                <span className="text-secondary">Open Time:</span>
-                <input
-                  type="time"
-                  value={room.openTime}
-                  onChange={(e) => handleChange(room.id, 'openTime', e.target.value)}
-                  className="w-full border px-2 py-1 rounded"
-                />
-              </label>
-              <label className="block w-1/2">
-                <span className="text-secondary">Close Time:</span>
-                <input
-                  type="time"
-                  value={room.closeTime}
-                  onChange={(e) => handleChange(room.id, 'closeTime', e.target.value)}
-                  className="w-full border px-2 py-1 rounded"
-                />
-              </label>
+              {['openTime', 'closeTime'].map((field) => (
+                <label key={field} className="block w-1/2">
+                  <span className="text-secondary">{field === 'openTime' ? 'Open' : 'Close'} Time:</span>
+                  <input
+                    type="time"
+                    value={room[field]}
+                    onChange={e => handleChange(room.id, field, e.target.value)}
+                    className="w-full border px-2 py-1 rounded"
+                  />
+                </label>
+              ))}
             </div>
+
             {room.category === 'Common Room' || room.category === 'Classroom' ? (
-              <label className="block">
-                <span className="text-secondary">Assigned To:</span>
-                <input
-                  type="text"
-                  value={EINA}
-                  disabled
-                  className="w-full border px-2 py-1 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
-                />
-              </label>
-            ) : (
-              <div className="space-y-2">
-                <label className="block">
-                  <span className="text-secondary">Assigned To:</span>
+              <input
+                type="text"
+                value={EINA}
+                disabled
+                className="w-full border px-2 py-1 rounded bg-gray-100 text-gray-500 cursor-not-allowed"
+              />
+            ) : room.category === 'Office' ? (
+              <>
+                <span className="text-secondary">Assign To:</span>
+                <div className="flex gap-4">
+                  {['department', 'person'].map(mode => (
+                    <label key={mode} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name={`assignMode-${room.id}`}
+                        value={mode}
+                        checked={room.assignMode === mode}
+                        onChange={() => handleChange(room.id, 'assignMode', mode)}
+                      />
+                      {mode === 'department' ? 'Department' : 'Person ID'}
+                    </label>
+                  ))}
+                </div>
+
+                {room.assignMode === 'department' && (
                   <select
-                    value={room.assignedTo || ''}
-                    onChange={(e) => handleChange(room.id, 'assignedTo', e.target.value)}
+                    value={room.departmentValue}
+                    onChange={e => handleChange(room.id, 'departmentValue', e.target.value)}
                     className="w-full border px-2 py-1 rounded"
                   >
-                    {getAssignableOptions(room.category).map((opt) => (
-                      <option key={opt.id} value={opt.id}>{opt.label}</option>
-                    ))}
+                    <option value="">-- SELECT --</option>
+                    {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
-                </label>
-                {room.category === 'Office' && (
-                  <label className="block">
-                    <span className="text-secondary">Or enter person ID manually:</span>
-                    <input
-                      type="text"
-                      placeholder="Enter person ID"
-                      value={room.assignedTo || ''}
-                      onChange={(e) => handleChange(room.id, 'assignedTo', e.target.value)}
-                      className="w-full border px-2 py-1 rounded"
-                    />
-                  </label>
                 )}
-              </div>
+
+                {room.assignMode === 'person' && (
+                  <input
+                    type="text"
+                    placeholder="Enter person ID"
+                    value={room.personValue}
+                    onChange={e => handleChange(room.id, 'personValue', e.target.value)}
+                    className="w-full border px-2 py-1 rounded"
+                  />
+                )}
+              </>
+            ) : (
+              <select
+                value={room.assignedTo}
+                onChange={e => handleChange(room.id, 'assignedTo', e.target.value)}
+                className="w-full border px-2 py-1 rounded"
+              >
+                <option value="">-- SELECT --</option>
+                {getAssignableOptions(room.category).map(opt => (
+                  <option key={opt.id} value={opt.id}>{opt.label}</option>
+                ))}
+              </select>
             )}
+
             <label className="block">
               <span className="text-secondary">Max Usage (%):</span>
               <input
                 type="number"
                 min="0"
                 max="100"
-                value={room.maxUsage || 100}
-                onChange={(e) => handleChange(room.id, 'maxUsage', parseInt(e.target.value))}
+                value={room.maxUsage}
+                onChange={e => handleChange(room.id, 'maxUsage', parseInt(e.target.value))}
                 className="w-full border px-2 py-1 rounded"
               />
             </label>
+
             <button
               onClick={() => handleUpdate(room.id, room)}
               className="bg-primary text-white mt-2 px-4 py-2 rounded hover:bg-secondary"
