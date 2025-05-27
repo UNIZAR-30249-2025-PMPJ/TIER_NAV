@@ -146,7 +146,7 @@ export const BookingData = () => {
 
             const responseData = await response.text(); 
 
-
+            console.log("response", response, "responseData", responseData, "respone.status", response.status);
             if (!response.ok) {
                 console.error('Failed to reserve rooms:', responseData);
                 alert(`Failed to reserve room(s): ${selectedRooms.map(room => room.name).join(', ')}. ${responseData}. Please try again later.`);
