@@ -57,9 +57,14 @@ const ManagePeople = () => {
   };
 
   const handleUpdate = async () => {
-    try {
-      const finalDepartment = shouldClearDepartment(newRole) ? null : newDepartment;
+    if (isDepartmentAllowed(newRole) && (!newDepartment || newDepartment === '')) {
+      alert('Please select a department.');
+      return;
+    }
 
+    const finalDepartment = shouldClearDepartment(newRole) ? null : newDepartment;
+
+    try {
       const res = await fetch(`${Url}/people/${personId}`, {
         method: 'PUT',
         headers: {
@@ -138,6 +143,7 @@ const ManagePeople = () => {
                   onChange={(e) => setNewDepartment(e.target.value)}
                   className="w-full border px-2 py-1 rounded mt-1"
                 >
+                  <option value="">-- SELECT --</option>
                   {departments.map((dept) => (
                     <option key={dept} value={dept}>{dept}</option>
                   ))}
