@@ -28,7 +28,7 @@ const Bookings = () => {
 
         return {
           id: res.id,
-          identifier: res.spaceId,
+          identifiers: res.spaceIds,
           people: res.maxAttendees,
           date: start.toLocaleDateString('es-ES'),
           start: start.toTimeString().slice(0, 5),
@@ -59,6 +59,7 @@ const Bookings = () => {
         setBookings((prev) => prev.filter(b => b.id !== id));
       } else {
         console.error('Failed to delete booking.');
+        alert('Failed to cancel booking. Please try again.');
       }
     } catch (err) {
       console.error('Error deleting booking:', err);
@@ -84,18 +85,25 @@ const Bookings = () => {
         <table className="w-full text-left text-md text-secondary">
           <thead>
             <tr className="border-b border-blue-300">
-              <th className="pb-2">Identifier</th>
+              <th className="pb-2">Spaces</th>
               <th className="pb-2">People</th>
               <th className="pb-2">Date</th>
               <th className="pb-2">Start</th>
               <th className="pb-2">End</th>
               <th className="pb-2">State</th>
+              <th className="pb-2"></th>
             </tr>
           </thead>
           <tbody>
             {bookings.map((booking) => (
               <tr key={booking.id} className="border-b border-blue-200 text-black">
-                <td className="py-2">{booking.identifier}</td>
+                <td className="py-2">
+                  {Array.isArray(booking.identifiers) && booking.identifiers.length > 1
+                    ? booking.identifiers.join(', ')
+                    : booking.identifiers.length === 1
+                    ? booking.identifiers[0]
+                    : 'Unknown Space'}
+                </td>
                 <td className="py-2">{booking.people}</td>
                 <td className="py-2">{booking.date}</td>
                 <td className="py-2">{booking.start}</td>
@@ -113,7 +121,7 @@ const Bookings = () => {
             ))}
             {bookings.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center py-4 text-gray-500">
+                <td colSpan="7" className="text-center py-4 text-gray-500">
                   No bookings yet.
                 </td>
               </tr>

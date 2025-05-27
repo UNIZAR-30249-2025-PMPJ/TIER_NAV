@@ -28,7 +28,7 @@ const ManageBookings = () => {
 
         return {
           id: res.id,
-          identifier: res.spaceId,
+          identifier: res.spaceIds,
           userId: res.personId,
           people: res.maxAttendees,
           state: res.state,
@@ -112,7 +112,11 @@ const ManageBookings = () => {
           <tbody>
             {bookings.map((booking) => (
               <tr key={booking.id} className="border-b border-blue-200 text-black">
-                <td className="py-2">{booking.identifier}</td>
+                {Array.isArray(booking.identifiers) && booking.identifiers.length > 1
+                    ? booking.identifiers.join(', ')
+                    : booking.identifiers.length === 1
+                    ? booking.identifiers[0]
+                    : 'Unknown Space'}
                 <td className="py-2">{booking.userId}</td>
                 <td className="py-2">{booking.people}</td>
                 <td className="py-2">{booking.date}</td>
