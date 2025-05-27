@@ -43,7 +43,7 @@ const Layout = () => {
             </button>
             <span className="text-blue-400">|</span>
             <button onClick={() => navigate(routes.home)} className={navLinkClass(routes.home)}>
-              Mapa
+              Map
             </button>
             <span className="text-blue-400">|</span>
             <button onClick={() => navigate(routes.bookings)} className={navLinkClass(routes.bookings)}>
