@@ -11,7 +11,7 @@ const EINA = 'EINA - ADA BYRON';
 
 const ManageSpace = () => {
   const { user } = useContext(UserContext);
-  const [filters, setFilters] = useState({ identifier: '', category: '', maxOccupants: '', floor: '' });
+  const [filters, setFilters] = useState({ identifier: '', category: '', capacity: '', floor: '' });
   const [availableRooms, setAvailableRooms] = useState([]);
 
   const handleFilterChange = (e) => {
@@ -22,7 +22,7 @@ const ManageSpace = () => {
   const buildQueryParams = () => {
     const params = new URLSearchParams();
     if (filters.identifier) params.append('id', filters.identifier);
-    if (filters.maxOccupants) params.append('maxOccupants', filters.maxOccupants);
+    if (filters.capacity) params.append('maxOccupants', filters.capacity);
     if (filters.category) params.append('reservabilityCategory', filters.category);
     if (filters.floor) params.append('floor', filters.floor);
     return params.toString();
@@ -171,7 +171,7 @@ const ManageSpace = () => {
       <div className="bg-white p-6 rounded-xl shadow-md">
         <h2 className="text-xl font-semibold text-secondary mb-4">Search for a Room</h2>
         <div className="flex flex-col gap-4">
-          {['identifier', 'category', 'maxOccupants', 'floor'].map((field) => (
+          {['identifier', 'category', 'capacity', 'floor'].map((field) => (
             <label className="block" key={field}>
               {field.charAt(0).toUpperCase() + field.slice(1)}
               <input
