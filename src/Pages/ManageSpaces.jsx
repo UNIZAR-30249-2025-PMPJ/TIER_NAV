@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Url } from '../utils/url';
 import { UserContext } from '../contexts/UserContext';
 
