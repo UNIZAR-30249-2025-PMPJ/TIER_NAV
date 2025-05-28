@@ -36,7 +36,6 @@ const ManageSpace = () => {
       });
       if (!response.ok) throw new Error('Failed to fetch rooms');
       const data = await response.json();
-      console.log('Fetched rooms:', data);
       const formatted = data.map((room) => {
         const isOffice = room.reservabilityCategory?.name === 'Office';
         const assignedTo = typeof room.assignedTo === 'object' ? room.assignedTo.id : room.assignedTo || '';
@@ -52,6 +51,7 @@ const ManageSpace = () => {
           openTime: room.openTime ? new Date(room.openTime).toISOString().substring(11, 16) : 'N/A',
           closeTime: room.closeTime ? new Date(room.closeTime).toISOString().substring(11, 16) : 'N/A',
           assignedTo,
+          currentAssignedTo: assignedTo,
           assignMode: isOffice ? (isDept ? 'department' : 'person') : undefined,
           departmentValue: isOffice && isDept ? assignedTo : '',
           personValue: isOffice && !isDept ? assignedTo : '',
@@ -113,7 +113,6 @@ const ManageSpace = () => {
       maxUsage: roomData.maxUsage,
       assignedTo
     };
-
     try {
       const res = await fetch(`${Url}/spaces/${roomId}`, {
         method: 'PUT',
@@ -126,6 +125,11 @@ const ManageSpace = () => {
 
       if (!res.ok) throw new Error('Update failed');
       alert('Room updated successfully');
+
+      setAvailableRooms(prev => prev.map(r =>
+        r.id === roomId ? { ...r, currentAssignedTo: assignedTo } : r
+      ));
+
     } catch {
       alert('Error updating room');
     }
@@ -182,15 +186,14 @@ const ManageSpace = () => {
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
               />
             </label>
-            
           ))}
           <label className="block">
             Category
             <select
-            name="category"
-            value={filters.category}
-            onChange={handleFilterChange}
-            className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
+              name="category"
+              value={filters.category}
+              onChange={handleFilterChange}
+              className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
             >
               <option value="">Select Category</option>
               <option value="Common Room">Common Room</option>
@@ -198,8 +201,7 @@ const ManageSpace = () => {
               <option value="Classroom">Classroom</option>
               <option value="Office">Office</option>
               <option value="Seminar Room">Seminar Room</option>
-
-          </select>
+            </select>
           </label>
         </div>
         <button onClick={handleSearch} className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary w-full">
@@ -214,7 +216,7 @@ const ManageSpace = () => {
           <div key={room.id} className="bg-white p-4 rounded shadow-md space-y-2">
             <p><strong>ID:</strong> {room.id}</p>
             <p><strong>Name:</strong> {room.name}</p>
-            <p className="text-sm text-gray-600"><strong>Currently assigned to:</strong> {room.assignedTo || 'None'}</p>
+            <p className="text-sm text-gray-600"><strong>Currently assigned to:</strong> {room.currentAssignedTo || 'None'}</p>
 
             <label className="block">
               <span className="text-secondary">Reservable:</span>
