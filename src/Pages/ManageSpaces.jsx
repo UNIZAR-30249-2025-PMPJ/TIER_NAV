@@ -36,6 +36,7 @@ const ManageSpace = () => {
       });
       if (!response.ok) throw new Error('Failed to fetch rooms');
       const data = await response.json();
+      console.log('Fetched rooms:', data);
       const formatted = data.map((room) => {
         const isOffice = room.reservabilityCategory?.name === 'Office';
         const assignedTo = typeof room.assignedTo === 'object' ? room.assignedTo.id : room.assignedTo || '';
@@ -48,8 +49,8 @@ const ManageSpace = () => {
           maxUsage: room.maxUsage ?? 'N/A',
           maxOccupants: room.maxOccupants ?? 'N/A',
           floor: room.floor ?? 'N/A',
-          openTime: room.openTime ? new Date(room.openTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-          closeTime: room.closeTime ? new Date(room.closeTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+          openTime: room.openTime ? new Date(room.openTime).toISOString().substring(11, 16) : 'N/A',
+          closeTime: room.closeTime ? new Date(room.closeTime).toISOString().substring(11, 16) : 'N/A',
           assignedTo,
           assignMode: isOffice ? (isDept ? 'department' : 'person') : undefined,
           departmentValue: isOffice && isDept ? assignedTo : '',
