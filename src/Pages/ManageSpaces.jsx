@@ -171,7 +171,7 @@ const ManageSpace = () => {
       <div className="bg-white p-6 rounded-xl shadow-md">
         <h2 className="text-xl font-semibold text-secondary mb-4">Search for a Room</h2>
         <div className="flex flex-col gap-4">
-          {['identifier', 'category', 'capacity', 'floor'].map((field) => (
+          {['identifier', 'capacity', 'floor'].map((field) => (
             <label className="block" key={field}>
               {field.charAt(0).toUpperCase() + field.slice(1)}
               <input
@@ -181,7 +181,22 @@ const ManageSpace = () => {
                 className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
               />
             </label>
+            
           ))}
+          <select
+          name="category"
+          value={filters.category}
+          onChange={handleFilterChange}
+          className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
+          >
+            <option value="">Select Category</option>
+            <option value="Common Room">Common Room</option>
+            <option value="Laboratory">Laboratory</option>
+            <option value="Classroom">Classroom</option>
+            <option value="Office">Office</option>
+            <option value="Seminar Room">Seminar Room</option>
+
+        </select>
         </div>
         <button onClick={handleSearch} className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary w-full">
           Search
