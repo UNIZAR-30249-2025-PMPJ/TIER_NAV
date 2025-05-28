@@ -183,20 +183,23 @@ const ManageSpace = () => {
             </label>
             
           ))}
-          <select
-          name="category"
-          value={filters.category}
-          onChange={handleFilterChange}
-          className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
-          >
-            <option value="">Select Category</option>
-            <option value="Common Room">Common Room</option>
-            <option value="Laboratory">Laboratory</option>
-            <option value="Classroom">Classroom</option>
-            <option value="Office">Office</option>
-            <option value="Seminar Room">Seminar Room</option>
+          <label className="block">
+            Category
+            <select
+            name="category"
+            value={filters.category}
+            onChange={handleFilterChange}
+            className="w-full border border-gray-300 rounded px-3 py-2 mt-1 text-black"
+            >
+              <option value="">Select Category</option>
+              <option value="Common Room">Common Room</option>
+              <option value="Laboratory">Laboratory</option>
+              <option value="Classroom">Classroom</option>
+              <option value="Office">Office</option>
+              <option value="Seminar Room">Seminar Room</option>
 
-        </select>
+          </select>
+          </label>
         </div>
         <button onClick={handleSearch} className="mt-6 bg-primary text-white px-6 py-2 rounded-md hover:bg-secondary w-full">
           Search
